@@ -40,7 +40,7 @@ ergebnis<-ml.summary(autos$PS,"Autos","PS",box=T)
 ergebnis
 ```
 
-<img src="man/figures/README-ps-1.png" width="100%" /><img src="man/figures/README-ps-2.png" width="100%" />
+<img src="man/figures/ps-1.png" width="100%" /><img src="man/figures/ps-2.png" width="100%" />
 
     #>              [,1]
     #> anzahl       "34864"                                                             
@@ -66,7 +66,7 @@ ergebnis<-ml.summary(autos$Modell,"Autos","Modell",bar=T,barminmax=20)
 ergebnis
 ```
 
-<img src="man/figures/README-modell-1.png" width="100%" /><img src="man/figures/README-modell-2.png" width="100%" />
+<img src="man/figures/modell-1.png" width="100%" /><img src="man/figures/modell-2.png" width="100%" />
 
     #>              [,1]   
     #> anzahl       "34864"
