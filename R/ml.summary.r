@@ -80,13 +80,13 @@ ml.summary<-function (variable,titel,achse,bar=F,barminmax=0,box=F,rel=F)
     df<-as.data.frame(variable)
     colnames(df)<-c("daten")
     p.abs<-ggplot2::ggplot(df)+                               # Absolute Häufigkeit
-      aes(x=daten)+                       
-      geom_histogram(bins=100,col="white")+                       
-      labs(title="Histogramm",
-           subtitle=titel,x=achse,y="Anzahl (Absolute Häufigkeit)")
+      ggplot2::aes(x=daten)+                       
+      ggplot2::geom_histogram(bins=100,col="white")+                       
+      ggplot2::labs(title="Histogramm",
+                    subtitle=titel,x=achse,y="Anzahl (Absolute Häufigkeit)")
     if (rel==TRUE){
-      p.rel<-p.abs+aes(y=..density..)+                        # Relative Häufikeit
-        labs(y="Anteil (Relative Häufigkeit") 
+      p.rel<-p.abs+ggplot2::aes(y=..density..)+               # Relative Häufikeit
+        ggplot2::labs(y="Anteil (Relative Häufigkeit") 
       gridExtra::grid.arrange(p.abs,p.rel,nrow=1,ncol=2)
     }
     else {
@@ -95,13 +95,13 @@ ml.summary<-function (variable,titel,achse,bar=F,barminmax=0,box=F,rel=F)
     #- Box-Plot-------------------------------------------------------------------
     if (box==TRUE){
       p.box<-ggplot2::ggplot(df)+                             # Boxplot
-        aes(y=daten)+  
-        labs(title="Box-Plot",
-             subtitle=titel,y=achse) +
-        geom_boxplot() +
-        theme(axis.title.x=element_blank(),                   # x-Achse ohne
-              axis.text.x=element_blank(),                    # Beschriftung
-              axis.ticks.x=element_blank())
+        ggplot2::aes(y=daten)+  
+        ggplot2::labs(title="Box-Plot",
+                      subtitle=titel,y=achse) +
+        ggplot2::geom_boxplot() +
+        ggplot2::theme(axis.title.x=element_blank(),          # x-Achse ohne
+                       axis.text.x=element_blank(),           # Beschriftung
+                       axis.ticks.x=element_blank())
       gridExtra::grid.arrange(p.box,nrow=1,ncol=1)
     }
   }  
@@ -129,27 +129,27 @@ ml.summary<-function (variable,titel,achse,bar=F,barminmax=0,box=F,rel=F)
     df.x<-data.frame(x=tab.daten)
     colnames(df.x)<-c("y","x")
     p.bar<-ggplot2::ggplot(df.x)+                          
-      aes(x=x,y=reorder(y,x),fill=y)+
-      geom_bar(position="dodge",stat="identity")+
-      labs(title="Bar-Chart",subtitle=titel,x="Anzahl",y=achse)+
-      theme(legend.position = "none")
+      ggplot2::aes(x=x,y=reorder(y,x),fill=y)+
+      ggplot2::geom_bar(position="dodge",stat="identity")+
+      ggplot2::labs(title="Bar-Chart",subtitle=titel,x="Anzahl",y=achse)+
+      ggplot2::theme(legend.position = "none")
     gridExtra::grid.arrange(p.bar,nrow=1,ncol=1)
     if (barminmax>0){
       df.x.sort<-arrange(df.x,x)[1:barminmax,]
       p.bar<-ggplot2::ggplot(df.x.sort)+                          
-        aes(x=x,y=reorder(y,x),fill=y)+
-        geom_bar(position="dodge",stat="identity")+
-        labs(title=paste0("Bar-Chart"),
+        ggplot2::aes(x=x,y=reorder(y,x),fill=y)+
+        ggplot2::geom_bar(position="dodge",stat="identity")+
+        ggplot2::labs(title=paste0("Bar-Chart"),
              subtitle=paste0(titel," (Bottom ",barminmax," von ",nrow(df.x),")"),x="Anzahl",y=achse)+
-        theme(legend.position = "none")
+        ggplot2::theme(legend.position = "none")
       gridExtra::grid.arrange(p.bar,nrow=1,ncol=1)
       df.x.sort<-arrange(df.x,x)[(nrow(df.x)-barminmax):nrow(df.x),]
       p.bar<-ggplot2::ggplot(df.x.sort)+                          
-        aes(x=x,y=reorder(y,x),fill=y)+
-        geom_bar(position="dodge",stat="identity")+
-        labs(title=paste0("Bar-Chart"),
+        ggplot2::aes(x=x,y=reorder(y,x),fill=y)+
+        ggplot2::geom_bar(position="dodge",stat="identity")+
+        ggplot2::labs(title=paste0("Bar-Chart"),
              subtitle=paste0(titel," (Top ",barminmax," von ",nrow(df.x),")"),x="Anzahl",y=achse)+
-        theme(legend.position = "none")
+        ggplot2::theme(legend.position = "none")
       gridExtra::grid.arrange(p.bar,nrow=1,ncol=1)
     }
     var.bar<-paste("Barchart fehlerfrei")
