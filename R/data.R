@@ -10,6 +10,34 @@
 #' }
 "alkohol"
 
+#' Alcohol consumption by country
+#'
+#' The dataset was created from data available at \url{https://www.prescient.pro/}.
+#'
+#' @format A data frame with 1000 rows and 6 variables:
+#' \describe{
+#'   \item{Marke}{brand}
+#'   \item{PS}{horse power}
+#'   \item{Preis}{price}
+#'   \item{Alter}{age}
+#'   \item{Kategorie}{category}
+#'   \item{Kilometer}{mileage in km}
+#' }
+"kfz"
+
+#' List of words with sentiment value
+#'
+#' A list of words in a text with their sentiment value based on the Leipzig dictionary \url{https://www.prescient.pro/}.
+#'
+#' @format A data frame with 36 rows and 4 variables:
+#' \describe{
+#'   \item{token}{word}
+#'   \item{anzahl}{count of word in text}
+#'   \item{wert}{sentiment value of word}
+#'   \item{kumwert}{cumulated sentiment value of words}
+#' }
+"leipzig"
+
 
 #' Used cars in the USA crawled 2016
 #'
