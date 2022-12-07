@@ -79,7 +79,7 @@ ml.summary<-function (variable,titel,achse,bar=F,barminmax=0,box=F,rel=F)
     variable<-variable[!is.na(variable)]
     df<-as.data.frame(variable)
     colnames(df)<-c("daten")
-    p.abs<-ggplot(df)+                                        # Absolute Häufigkeit
+    p.abs<-ggplot2::ggplot(df)+                               # Absolute Häufigkeit
       aes(x=daten)+                       
       geom_histogram(bins=100,col="white")+                       
       labs(title="Histogramm",
@@ -94,13 +94,13 @@ ml.summary<-function (variable,titel,achse,bar=F,barminmax=0,box=F,rel=F)
     }
     #- Box-Plot-------------------------------------------------------------------
     if (box==TRUE){
-      p.box<-ggplot(df)+                                      # Boxplot
+      p.box<-ggplot2::ggplot(df)+                             # Boxplot
         aes(y=daten)+  
         labs(title="Box-Plot",
              subtitle=titel,y=achse) +
         geom_boxplot() +
-        theme(axis.title.x=element_blank(),            # x-Achse ohne
-              axis.text.x=element_blank(),                   # Beschriftung
+        theme(axis.title.x=element_blank(),                   # x-Achse ohne
+              axis.text.x=element_blank(),                    # Beschriftung
               axis.ticks.x=element_blank())
       gridExtra::grid.arrange(p.box,nrow=1,ncol=1)
     }
@@ -128,7 +128,7 @@ ml.summary<-function (variable,titel,achse,bar=F,barminmax=0,box=F,rel=F)
     tab.daten<-table(df$daten)
     df.x<-data.frame(x=tab.daten)
     colnames(df.x)<-c("y","x")
-    p.bar<-ggplot(df.x)+                          
+    p.bar<-ggplot2::ggplot(df.x)+                          
       aes(x=x,y=reorder(y,x),fill=y)+
       geom_bar(position="dodge",stat="identity")+
       labs(title="Bar-Chart",subtitle=titel,x="Anzahl",y=achse)+
@@ -136,7 +136,7 @@ ml.summary<-function (variable,titel,achse,bar=F,barminmax=0,box=F,rel=F)
     gridExtra::grid.arrange(p.bar,nrow=1,ncol=1)
     if (barminmax>0){
       df.x.sort<-arrange(df.x,x)[1:barminmax,]
-      p.bar<-ggplot(df.x.sort)+                          
+      p.bar<-ggplot2::ggplot(df.x.sort)+                          
         aes(x=x,y=reorder(y,x),fill=y)+
         geom_bar(position="dodge",stat="identity")+
         labs(title=paste0("Bar-Chart"),
@@ -144,7 +144,7 @@ ml.summary<-function (variable,titel,achse,bar=F,barminmax=0,box=F,rel=F)
         theme(legend.position = "none")
       gridExtra::grid.arrange(p.bar,nrow=1,ncol=1)
       df.x.sort<-arrange(df.x,x)[(nrow(df.x)-barminmax):nrow(df.x),]
-      p.bar<-ggplot(df.x.sort)+                          
+      p.bar<-ggplot2::ggplot(df.x.sort)+                          
         aes(x=x,y=reorder(y,x),fill=y)+
         geom_bar(position="dodge",stat="identity")+
         labs(title=paste0("Bar-Chart"),
