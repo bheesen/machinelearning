@@ -87,10 +87,10 @@ ml.summary<-function (variable,titel,achse,bar=F,barminmax=0,box=F,rel=F)
     if (rel==TRUE){
       p.rel<-p.abs+aes(y=..density..)+                        # Relative Häufikeit
         labs(y="Anteil (Relative Häufigkeit") 
-      grid.arrange(p.abs,p.rel,nrow=1,ncol=2)
+      gridExtra::grid.arrange(p.abs,p.rel,nrow=1,ncol=2)
     }
     else {
-      grid.arrange(p.abs,nrow=1,ncol=1)
+      gridExtra::grid.arrange(p.abs,nrow=1,ncol=1)
     }
     #- Box-Plot-------------------------------------------------------------------
     if (box==TRUE){
@@ -102,7 +102,7 @@ ml.summary<-function (variable,titel,achse,bar=F,barminmax=0,box=F,rel=F)
         theme(axis.title.x=element_blank(),            # x-Achse ohne
               axis.text.x=element_blank(),                   # Beschriftung
               axis.ticks.x=element_blank())
-      grid.arrange(p.box,nrow=1,ncol=1)
+      gridExtra::grid.arrange(p.box,nrow=1,ncol=1)
     }
   }  
   else{
@@ -133,7 +133,7 @@ ml.summary<-function (variable,titel,achse,bar=F,barminmax=0,box=F,rel=F)
       geom_bar(position="dodge",stat="identity")+
       labs(title="Bar-Chart",subtitle=titel,x="Anzahl",y=achse)+
       theme(legend.position = "none")
-    grid.arrange(p.bar,nrow=1,ncol=1)
+    gridExtra::grid.arrange(p.bar,nrow=1,ncol=1)
     if (barminmax>0){
       df.x.sort<-arrange(df.x,x)[1:barminmax,]
       p.bar<-ggplot(df.x.sort)+                          
@@ -142,7 +142,7 @@ ml.summary<-function (variable,titel,achse,bar=F,barminmax=0,box=F,rel=F)
         labs(title=paste0("Bar-Chart"),
              subtitle=paste0(titel," (Bottom ",barminmax," von ",nrow(df.x),")"),x="Anzahl",y=achse)+
         theme(legend.position = "none")
-      grid.arrange(p.bar,nrow=1,ncol=1)
+      gridExtra::grid.arrange(p.bar,nrow=1,ncol=1)
       df.x.sort<-arrange(df.x,x)[(nrow(df.x)-barminmax):nrow(df.x),]
       p.bar<-ggplot(df.x.sort)+                          
         aes(x=x,y=reorder(y,x),fill=y)+
@@ -150,7 +150,7 @@ ml.summary<-function (variable,titel,achse,bar=F,barminmax=0,box=F,rel=F)
         labs(title=paste0("Bar-Chart"),
              subtitle=paste0(titel," (Top ",barminmax," von ",nrow(df.x),")"),x="Anzahl",y=achse)+
         theme(legend.position = "none")
-      grid.arrange(p.bar,nrow=1,ncol=1)
+      gridExtra::grid.arrange(p.bar,nrow=1,ncol=1)
     }
     var.bar<-paste("Barchart fehlerfrei")
   }
