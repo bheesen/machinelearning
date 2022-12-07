@@ -4,12 +4,12 @@
 #' @param titel is the name of the variable to be used as title on diagrams
 #' @param achse is the description of the axis on diagrams
 #' @param bar if TRUE a bar-chart is created
-#' @param barminmax defines how many bars shall be displayed
+#' @param barminmax defines how many bars Top-x, Bottom-x shall be displayed
 #' @param box if TRUE a box-plot is created
 #' @param rel if TRUE a histogram with the relative values in & is created
 #' @keywords descriptive, statistics, summary
 #' @return a vector with a list of descriptive statistics
-#' @example ml.summary(autos$Modell,"Autos","Modell","Anzahl",bar=T,barminmax=20)
+#' @example ml.summary(autos$Modell,"Autos","Modell",bar=T,barminmax=20)
 #' @export
 ml.summary<-function (variable,titel,achse,bar=F,barminmax=0,box=F,rel=F) 
   # variable: Variable, die analysiert und visualisiert werden soll
