@@ -99,9 +99,9 @@ ml.summary<-function (variable,titel,achse,bar=F,barminmax=0,box=F,rel=F)
         ggplot2::labs(title="Box-Plot",
                       subtitle=titel,y=achse) +
         ggplot2::geom_boxplot() +
-        ggplot2::theme(axis.title.x=element_blank(),          # x-Achse ohne
-                       axis.text.x=element_blank(),           # Beschriftung
-                       axis.ticks.x=element_blank())
+        ggplot2::theme(axis.title.x=ggplot2::element_blank(), # x-Achse ohne
+                       axis.text.x=ggplot2::element_blank(),  # Beschriftung
+                       axis.ticks.x=ggplot2::element_blank())
       gridExtra::grid.arrange(p.box,nrow=1,ncol=1)
     }
   }  
