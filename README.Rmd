@@ -46,35 +46,55 @@ What is special about using `README.Rmd` instead of just `README.md`?
 You can include R chunks like so:
 
 ``` r
-ergebnis<-ml.summary(autos$Modell,"Autos","Modell","Anzahl",bar=T,barminmax=20)
+ergebnis<-ml.summary(autos$PS,"Autos","PS",box=T)
 ergebnis
 ```
 
-<img src="man/figures/README-studierende-1.png" width="100%" /><img src="man/figures/README-studierende-2.png" width="100%" />
+<img src="man/figures/README-ps-1.png" width="100%" /><img src="man/figures/README-ps-2.png" width="100%" />
 
-    #>              [,1]                                                                                       
-    #> n            "357"                                                                                      
-    #> na           "0"                                                                                        
-    #> maxanzahl    "42"                                                                                       
-    #> modus        "170"                                                                                      
-    #> median       "170"                                                                                      
-    #> mean         "172.039215686275"                                                                         
-    #> skewness     "0.519968092098753"                                                                        
-    #> skewness.txt "Schiefe 0.519968092098753 > 0, Rechte Schiefe: positive Schiefe, linkssteil, rechtsschief"
-    #> kurtosis     "0.395699862577392"                                                                        
-    #> kurtosis.txt "Exzess Kurtosis 0.395699862577392 > 0, steilgipflig"                                      
-    #> spannweite   "54"                                                                                       
-    #> min          "150"                                                                                      
-    #> max          "204"                                                                                      
-    #> var          "82.6613791584049"                                                                         
-    #> sd           "9.09183035248706"               
+    #>              [,1]
+    #> anzahl       "34864"                                                             
+    #> anzahl.na    "0"                                                                 
+    #> modus        "75"                                                                
+    #> median       "116"                                                               
+    #> mean         "128.48"                                                            
+    #> min          "29"                                                                
+    #> max          "500"                                                               
+    #> sd           "59.43"                                                             
+    #> q1           "86"                                                                
+    #> q3           "156"                                                               
+    #> iqr          "70"                                                                
+    #> whisker.min  "-19"                                                               
+    #> whisker.max  "261"                                                               
+    #> skewness     "1.47"                                                              
+    #> skewness.txt "Rechte Schiefe: 1.47 > 0, positive Schiefe,linkssteil,rechtsschief"
+    #> kurtosis     "3.7"                                                               
+    #> kurtosis.txt "Steilgipflig mit Exzess Kurtosis 3.7 > 0"
 
 ``` r
-ergebnis<-ml.summary.1(autos$Modell,"Autos","Modell","Anzahl",bar=T,barminmax=20)
+ergebnis<-ml.summary(autos$Modell,"Autos","Modell",bar=T,barminmax=20)
 ergebnis
 ```
+<img src="man/figures/README-modell-1.png" width="100%" /><img src="man/figures/README-modell-2.png" width="100%" />
 
-<img src="man/figures/README-studierende-3.png" width="100%"/>
+    #>              [,1]   
+    #> anzahl       "34864"
+    #> anzahl.na    "0"    
+    #> modus        "golf" 
+    #> median       NA     
+    #> mean         NA     
+    #> min          NA     
+    #> max          NA     
+    #> sd           NA     
+    #> q1           NA     
+    #> q3           NA     
+    #> iqr          NA     
+    #> whisker.min  NA     
+    #> whisker.max  NA     
+    #> skewness     NA     
+    #> skewness.txt NA     
+    #> kurtosis     NA     
+    #> kurtosis.txt NA 
 
 The `README.Rmd` file was used to create this `README.md` file using the
 function `devtools::build_readme()`.
