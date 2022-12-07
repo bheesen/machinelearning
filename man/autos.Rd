@@ -5,7 +5,7 @@
 \alias{autos}
 \title{Used cars in the USA crawled 2016}
 \format{
-A data frame with 47972 rows and 23 variables:
+A data frame with 34864 rows and 23 variables:
 \describe{
   \item{DatumCrawled}{date of crawling}
   \item{Name}{name}

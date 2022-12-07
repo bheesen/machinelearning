@@ -5,13 +5,13 @@
 \alias{flug}
 \title{Flights from New York airports in 2013}
 \format{
-A data frame with 328521 rows and 28 variables:
+A data frame with 336788 rows and 30 variables:
 \describe{
   \item{dest}{destination}
   \item{year}{year}
-  \item{arr_month}{arrival month}
-  \item{arr_day}{arrival day}
-  \item{arr_hour}{arrival hour}
+  \item{dest_month}{arrival month}
+  \item{dest_day}{arrival day}
+  \item{dest_hour}{arrival hour}
   \item{origin}{origin}
   \item{month}{origin month}
   \item{day}{origin day}
@@ -22,6 +22,7 @@ A data frame with 328521 rows and 28 variables:
   \item{air_time}{air_time}
   \item{dep_delay}{departure delay}
   \item{arr_delay}{arrival delay}
+  \item{sched_arr_time}{scheduled arrival time}
   \item{origin_alt}{origin altitude}
   \item{origin_tzone}{origin time zone}
   \item{dest_alt}{destination altitude}
@@ -34,7 +35,8 @@ A data frame with 328521 rows and 28 variables:
   \item{dest_precip}{destination precipitation}
   \item{dest_visib}{destination visibility}
   \item{quarter}{quarter of year}
-  \item{agegroup}{age of plane}
+  \item{agegroup}{age group of plane}
+  \item{avg_delay}{average delay}
 }
 }
 \usage{
