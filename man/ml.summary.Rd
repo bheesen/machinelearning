@@ -15,7 +15,7 @@ ml.summary(variable, titel, achse, bar = F, barminmax = 0, box = F, rel = F)
 
 \item{bar}{if TRUE a bar-chart is created}
 
-\item{barminmax}{defines how many bars shall be displayed}
+\item{barminmax}{defines how many bars Top-x, Bottom-x shall be displayed}
 
 \item{box}{if TRUE a box-plot is created}
 
