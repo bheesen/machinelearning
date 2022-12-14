@@ -4,7 +4,7 @@
 \alias{ml.tunepar}
 \title{Function to show the tuning parameters for a workflow or workflow set}
 \usage{
-ml.tunepar(wfl,wfl.name="Workflowname")
+ml.tunepar(wfl, wfl.name = "Workflowname")
 }
 \arguments{
 \item{wfl}{is the name of a workflow or workflow set}
@@ -17,6 +17,7 @@ a text with a message
 \description{
 Function to show the tuning parameters for a workflow or workflow set
 }
+\keyword{learning}
+\keyword{machine}
 \keyword{parameter,}
 \keyword{tuning,}
-\keyword{machine learning}
