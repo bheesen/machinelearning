@@ -118,6 +118,7 @@ ml.summary.2<-function (df,titel,xvar,yvar,npos=0,bw=F,
       }
       if (box==TRUE){
         if (is.factor(df$y)) {
+          df<-droplevels(df)
           df<- df %>% mutate(y = fct_reorder(y,x, .fun="mean"))
           df.x.mw<-round(mean(df$x,na.rm=TRUE),2)
           if (length(levels(df$y)) > 10 & bw!=TRUE) {
@@ -126,7 +127,7 @@ ml.summary.2<-function (df,titel,xvar,yvar,npos=0,bw=F,
             y.top10<-levels(df$y)[c(1:5,von:bis)]
             df.top10<-filter(df,df$y %in% y.top10)
             df.top10$y<-droplevels(df.top10$y)
-            var.hist<-paste("Box-Plot auf Top10 Levels beschränkt")
+            var.hist<-paste("Box-Plot auf Top10 Levels beschränkt (Top5 + Bottom5)")
             df.top10.sum <- df.top10 %>% 
               group_by(y) %>% 
               summarise(n=n())
@@ -165,20 +166,26 @@ ml.summary.2<-function (df,titel,xvar,yvar,npos=0,bw=F,
               summarise(n=n())
             if (npos==0) {
               p.box<-ggplot(df.top10)+                          
-                aes(x=x,y=y)+
+                aes(x=x,y=y,fill=y)+
                 geom_boxplot()+
                 labs(title="Box-Plot",
                      subtitle=paste0(titel," (Mittelwert=",df.x.mw,")"), 
                      x=xvar, y=yvar)+
+                scale_fill_manual(name="Kategorie:",
+                                  values=colour.own.nomin.1)+
+                guides(fill=guide_legend(reverse=TRUE))+
                 geom_vline(xintercept=df.x.mw,linewidth=1.5,alpha=0.2)
             }
             else {  
               p.box<-ggplot(df.top10)+                          
-                aes(x=x,y=y)+
+                aes(x=x,y=y,fill=y)+
                 geom_boxplot()+
                 labs(title="Box-Plot",
                      subtitle=paste0(titel," (Mittelwert=",df.x.mw,")"), 
                      x=xvar, y=yvar)+
+                scale_fill_manual(name="Kategorie:",
+                                  values=colour.own.nomin.1)+
+                guides(fill=guide_legend(reverse=TRUE))+
                 geom_vline(xintercept=df.x.mw,linewidth=1.5,alpha=0.2)+
                 geom_label(data=df.top10.sum,aes(x=npos,label=paste0("#",n)),fill=NA,size=rel(3),label.size=0.5)
             }
@@ -230,4 +237,4 @@ ml.summary.2<-function (df,titel,xvar,yvar,npos=0,bw=F,
     var.gesamt<-rbind(var.text,var.hist,var.bar,var.line,var.box,
                       var.scatter,var.kor)
     return(var.gesamt)
-  }
+}
