@@ -140,7 +140,7 @@ ml.summary.2<-function (df,titel,xvar,yvar,npos=0,bw=F,
                 scale_fill_manual(name="Kategorie:",
                                   values=colour.own.nomin.1)+
                 guides(fill=guide_legend(reverse=TRUE))+
-                geom_vline(xintercept=df.x.mw,size=1.5,alpha=0.2)
+                geom_vline(xintercept=df.x.mw,linewidth=1.5,alpha=0.2)
             }
             else {
               p.box<-ggplot(df.top10)+                          
@@ -152,8 +152,8 @@ ml.summary.2<-function (df,titel,xvar,yvar,npos=0,bw=F,
                 scale_fill_manual(name="Kategorie:",
                                   values=colour.own.nomin.1)+
                 guides(fill=guide_legend(reverse=TRUE))+
-                geom_vline(xintercept=df.x.mw,size=1.5,alpha=0.2)+
-                geom_label(data=df.top10.sum,aes(x=npos,label=paste0("#",n)),fill=NA)
+                geom_vline(xintercept=df.x.mw,linewidth=1.5,alpha=0.2)+
+                geom_label(data=df.top10.sum,aes(x=npos,label=paste0("#",n)),fill=NA,size=rel(3),label.size=0.5)
             }
             grid.arrange(p.box,nrow=1,ncol=1)
           }
@@ -170,7 +170,7 @@ ml.summary.2<-function (df,titel,xvar,yvar,npos=0,bw=F,
                 labs(title="Box-Plot",
                      subtitle=paste0(titel," (Mittelwert=",df.x.mw,")"), 
                      x=xvar, y=yvar)+
-                geom_vline(xintercept=df.x.mw,size=1.5,alpha=0.2)
+                geom_vline(xintercept=df.x.mw,linewidth=1.5,alpha=0.2)
             }
             else {  
               p.box<-ggplot(df.top10)+                          
@@ -179,8 +179,8 @@ ml.summary.2<-function (df,titel,xvar,yvar,npos=0,bw=F,
                 labs(title="Box-Plot",
                      subtitle=paste0(titel," (Mittelwert=",df.x.mw,")"), 
                      x=xvar, y=yvar)+
-                geom_vline(xintercept=df.x.mw,size=1.5,alpha=0.2)+
-                geom_label(data=df.top10.sum,aes(x=npos,label=paste0("#",n)),fill=NA)
+                geom_vline(xintercept=df.x.mw,linewidth=1.5,alpha=0.2)+
+                geom_label(data=df.top10.sum,aes(x=npos,label=paste0("#",n)),fill=NA,size=rel(3),label.size=0.5)
             }
             grid.arrange(p.box,nrow=1,ncol=1)
           }
