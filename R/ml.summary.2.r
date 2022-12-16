@@ -2,7 +2,7 @@
 #'
 #' @param df is a dataframe with two variables
 #' @param titel is the name of the variable to be used as subtitle on diagrams
-#' @param xvar name of the first variable
+#' @param xvar name of the first variable, a numeric variable
 #' @param yvar name of the second variable
 #' @param npos defines the x-value at which the number of items per category is displayed in a box-plot
 #' @param bw uses only black and white in a box-plot
@@ -85,15 +85,27 @@ ml.summary.2<-function (df,titel,xvar,yvar,npos=0,bw=F,
           tab.y<-table(df$y)
           df.y<-data.frame(x=tab.y)
           colnames(df.y)<-c("y","x")
-          p.bar<-ggplot(df.y)+                          
-            aes(x=x,y=y,fill=y)+
-            geom_bar(position="dodge",stat="identity")+
-            labs(title="Bar-Chart",
-                 subtitle=titel, 
-                 x="Anzahl", y=paste("Kategorie",yvar))+
-            scale_fill_manual(name="Kategorie:",
-                              values=colour.own.nomin.1)+
-            guides(fill=guide_legend(reverse=TRUE))
+          if (bw != TRUE) {
+            p.bar<-ggplot(df.y)+                          
+              aes(x=x,y=y,fill=y)+
+              geom_bar(position="dodge",stat="identity")+
+              labs(title="Bar-Chart",
+                   subtitle=titel, 
+                   x="Anzahl", y=paste("Kategorie",yvar))+
+              scale_fill_manual(name="Kategorie:",
+                                values=colour.own.nomin.1)+
+              guides(fill=guide_legend(reverse=TRUE))
+          } else {
+            df<- df %>% mutate(y=fct_reorder(y,x,.fun="max"))
+            p.bar<-ggplot(df)+                          
+              aes(x=x,y=y)+
+              geom_bar(position="dodge",stat="identity")+
+              labs(title="Bar-Chart",
+                   subtitle=titel, 
+                   x="Anzahl", y=paste("Kategorie",yvar))+
+              scale_fill_manual(name="Kategorie:")+
+              guides(fill=guide_legend(reverse=TRUE))            
+          }
           grid.arrange(p.bar,nrow=1,ncol=1)
           var.bar<-paste("Barchart fehlerfrei")
         }
