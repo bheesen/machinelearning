@@ -5,6 +5,7 @@
 #' @param xvar name of the first variable, a numeric variable
 #' @param yvar name of the second variable
 #' @param npos defines the x-value at which the number of items per category is displayed in a box-plot
+#' @param dec defines the number of decimals behind the period
 #' @param bw uses only black and white in a box-plot
 #' @param hist if TRUE a histogram is created
 #' @param bar if TRUE a bar-chart is created
@@ -16,7 +17,7 @@
 #' @return text with feedback to the function
 #' @example ml.summary.2(mpg[,c(3,1)],"Autos","Motorgröße in Liter","Marke",box=T)
 #' @export
-ml.summary.2<-function (df,titel,xvar,yvar,npos=0,bw=F,
+ml.summary.2<-function (df,titel,xvar,yvar,npos=0,dec=0,bw=F,
                         hist=F,bar=F,line=F,box=F,scatter=F,kor=F) 
     # df:             Dataframe mit 2 Variablen, die analysiert werden sollen
     # titel:          Untertitel 
@@ -142,7 +143,8 @@ ml.summary.2<-function (df,titel,xvar,yvar,npos=0,bw=F,
             var.hist<-paste("Box-Plot auf Top10 Levels beschränkt (Top5 + Bottom5)")
             df.top10.sum <- df.top10 %>% 
               group_by(y) %>% 
-              summarise(n=n())
+              summarise(n=n(),
+                        mw=round(mean(x),dec))
             if (npos==0) {
               p.box<-ggplot(df.top10)+                          
                 aes(x=x,y=y,fill=y)+
@@ -166,7 +168,7 @@ ml.summary.2<-function (df,titel,xvar,yvar,npos=0,bw=F,
                                   values=colour.own.nomin.1)+
                 guides(fill=guide_legend(reverse=TRUE))+
                 geom_vline(xintercept=df.x.mw,linewidth=1.5,alpha=0.2)+
-                geom_label(data=df.top10.sum,aes(x=npos,label=paste0("#",n)),fill=NA,size=rel(3),label.size=0.5)
+                geom_label(data=df.top10.sum,aes(x=npos,label=paste("N:",n,"Mw:",mw)),fill=NA,size=rel(3),label.size=0.5)
             }
             grid.arrange(p.box,nrow=1,ncol=1)
           }
@@ -175,7 +177,8 @@ ml.summary.2<-function (df,titel,xvar,yvar,npos=0,bw=F,
             var.hist<-paste("Box-Plot fehlerfrei")
             df.top10.sum <- df.top10 %>% 
               group_by(y) %>% 
-              summarise(n=n())
+              summarise(n=n(),
+                        mw=round(mean(x),dec))
             if (npos==0) {
               p.box<-ggplot(df.top10)+                          
                 aes(x=x,y=y,fill=y)+
@@ -199,7 +202,7 @@ ml.summary.2<-function (df,titel,xvar,yvar,npos=0,bw=F,
                                   values=colour.own.nomin.1)+
                 guides(fill=guide_legend(reverse=TRUE))+
                 geom_vline(xintercept=df.x.mw,linewidth=1.5,alpha=0.2)+
-                geom_label(data=df.top10.sum,aes(x=npos,label=paste0("#",n)),fill=NA,size=rel(3),label.size=0.5)
+                geom_label(data=df.top10.sum,aes(x=npos,label=paste("N:",n,"Mw:",mw)),fill=NA,size=rel(3),label.size=0.5)
             }
             grid.arrange(p.box,nrow=1,ncol=1)
           }
