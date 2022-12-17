@@ -4,12 +4,14 @@
 \alias{ml.eval}
 \title{Function to evaluate a machine learning model the correlation for numeric variables}
 \usage{
-ml.eval(modell, daten)
+ml.eval(modell, daten, ziel.spalte)
 }
 \arguments{
 \item{modell}{is the name of a machine learning model}
 
-\item{daten}{is a dataframe with data}
+\item{daten}{is a dataframe used for prediction}
+
+\item{ziel.spalte}{is the column number of the variable to be predicted}
 }
 \value{
 model name, dataframe name, rmse & rsq

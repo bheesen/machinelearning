@@ -10,6 +10,7 @@ ml.summary.2(
   xvar,
   yvar,
   npos = 0,
+  dec = 0,
   bw = F,
   hist = F,
   bar = F,
@@ -24,11 +25,13 @@ ml.summary.2(
 
 \item{titel}{is the name of the variable to be used as subtitle on diagrams}
 
-\item{xvar}{name of the first variable}
+\item{xvar}{name of the first variable, a numeric variable}
 
 \item{yvar}{name of the second variable}
 
 \item{npos}{defines the x-value at which the number of items per category is displayed in a box-plot}
+
+\item{dec}{defines the number of decimals behind the period}
 
 \item{bw}{uses only black and white in a box-plot}
 
