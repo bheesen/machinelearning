@@ -3,6 +3,7 @@
 export(ml.eval)
 export(ml.eval.kl)
 export(ml.eval.lr)
+export(ml.eval.wflset)
 export(ml.korrelation)
 export(ml.summary)
 export(ml.summary.2)
