@@ -11,9 +11,9 @@ ml.eval.kl(df, titel = "", xvar = "", yvar = "", scatter = F)
 
 \item{titel}{is the name of the variable to be used as subtitle on diagrams}
 
-\item{xvar}{name of the first variable}
+\item{xvar}{name of the column of the true variable in df}
 
-\item{yvar}{name of the second variable}
+\item{yvar}{name of the column of the estimated variable df}
 
 \item{scatter}{if TRUE a scatter-chart is created}
 }
