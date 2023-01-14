@@ -85,7 +85,7 @@ ml.summary<-function (variable,titel,achse,bar=F,barminmax=0,box=F,rel=F)
       ggplot2::labs(title="Histogramm",
                     subtitle=titel,x=achse,y="Anzahl (Absolute Häufigkeit)")
     if (rel==TRUE){
-      p.rel<-p.abs+ggplot2::aes(y=..density..)+               # Relative Häufikeit
+      p.rel<-p.abs+ggplot2::aes(y=after_stat(density))+       # Relative Häufikeit
         ggplot2::labs(y="Anteil (Relative Häufigkeit") 
       gridExtra::grid.arrange(p.abs,p.rel,nrow=1,ncol=2)
     }
