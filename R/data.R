@@ -281,3 +281,15 @@
 #' \describe{
 #' }
 "colour.own.spect.2"
+
+#' Average student grades by gender and age
+#'
+#' The dataset was created was created fictitiously.
+#'
+#' @format A data frame with 49999 rows and 5 variables
+#' \describe{
+#'   \item{Note}{grade}
+#'   \item{Geschlecht}{gender}
+#'   \item{Alter}{age}
+#' }
+"durchschnittsnoten"
