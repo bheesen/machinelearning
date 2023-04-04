@@ -1,0 +1,658 @@
+---
+title: "Verteilungen"
+author: "Tutorial von [_Professor Bernd Heesen_](http://www.prescient.pro), dem Autor des Buches [_Data Science und Statistik mit R_](https://www.amazon.de/Data-Science-Statistik-mit-Anwendungsl%C3%B6sungen/dp/3658348240/ref=sr_1_1?__mk_de_DE=%C3%85M%C3%85%C5%BD%C3%95%C3%91&dchild=1&keywords=Data+Science+und+Statistik+mit+R&qid=1627898747&sr=8-1)"
+date: "Version vom 19.10.2022"
+output: 
+  learnr::tutorial:
+    progressive: TRUE
+    allow_skip: TRUE
+    language: de
+runtime: shiny_prerendered
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(learnr)
+library(forcats)
+library(gridExtra)
+library(datascience)
+library(e1071)
+library(psych)
+library(vcd)
+library(corrr)
+library(MASS)
+library(GGally)
+```
+
+
+## Willkommen
+
+Dieses Tutorial ergänzt die Inhalte des Buches [_Data Science und Statistik mit R_](https://www.amazon.de/Data-Science-Statistik-mit-Anwendungsl%C3%B6sungen/dp/3658348240/ref=sr_1_1?__mk_de_DE=%C3%85M%C3%85%C5%BD%C3%95%C3%91&dchild=1&keywords=Data+Science+und+Statistik+mit+R&qid=1627898747&sr=8-1).
+
+Das Kapitel 4.1.3-4.1.4 behandelt Verteilungen ebenso wie Univariate, Bivariate und Multivariate Statistiken. Nachfolgend wird vorgestellt, wie dies von R unterstützt wird.
+
+```{r x_y-setup, exercise=FALSE, echo=FALSE, include=FALSE}
+
+```
+
+Berechnen Sie ....
+
+Die Anzeige sollte hinterher wie folgt aussehen: ![Vektor](images/xxx.jpg)
+
+```{r x_y, exercise=TRUE, exercise.setup="x_y-setup"}
+
+```
+
+```{r x_y-hint-1}
+
+```
+```{r x_y-hint-2}
+
+```
+
+## 1. Univariate Statistik
+
+Univariate Statistik betrachtet die Verteilung einer einzelnen Variablen. Die Funktion table() zeigt die absolute Häufigkeitsverteilung und die Funktion prop.table() die relative Häufigkeitsverteilung. Der Parameter useNA = "always" bewirkt, dass immer auch die Häufigkeit der NA-Werte angezeigt werden, selbst wenn keine NA-Werte vorliegen, z.B. table(studierende$Geburtsmonat, useNA = "always"). Mit der Funktion sort() kann das Ergebnis auch nach Häufigkeit sortiert dargestellt werden, z.B. sort(abs, decreasing=T). Die Funktion cumsum() erlaubt die relativen Häufigkeiten zu kumulieren.
+
+```{r 1_0-setup, exercise=FALSE, echo=FALSE, include=FALSE}
+sp1 <- as_tibble(studierende[1:15,5])                  # Stichprobe 1 (sp1)
+colnames(sp1) <- "Größe"
+```
+
+```{r 1_0, exercise=TRUE, exercise.setup="1_0-setup"}
+table(studierende$Geburtsmonat)                   # Umgang mit NA
+table(studierende$Geburtsmonat, useNA = "no")     # NA werden ignoriert (Standard)
+table(studierende$Geburtsmonat, useNA = "ifany")  # NA anzeigen, sofern vorhanden
+table(studierende$Geburtsmonat, useNA = "always") # NA immer anzeigen
+abs  <- table(sp1$Größe)                          # Absolute Häufigkeit
+abs
+sort(abs)                                         # Aufsteigend sortiert                                
+sort(abs, decreasing=T)                           # Absteigend sortiert
+rel <- round(100*prop.table(abs),2)               # Relative Häufigkeit in %
+rel
+cum <- round(cumsum(rel),2)                       # Kumulierte Häufigkeit
+cum
+uni <- rbind(abs,rel,cum)                         # Abs.+Rel.+Kum. Häufigkeit
+uni
+```
+
+### 1.1 Übung
+
+Der Dataframe kfz enthält 49999 Datensätze zu Autos. Erstellen Sie eine Tabelle mit den absoluten Häufigkeiten der Marken (Spalte mit dem Namen: Marke), wobei Sie NAs anzeigen sollten, sofern welche vorhanden sind und speichern Sie das Ergebnis in dem Vektor mit dem Namen abs ab. Lassen Sie sich dann den Inhalt von abs anzeigen.
+
+In einem nächsten Schritt sortieren Sie den Vektor abs absteigend nach dem Alphabet und lassen sich das Ergebnis anzeigen.
+
+Verwenden Sie die Funktion as.data.frame() und speichern den Inhalt von abs in dem Dataframe abs.df. Lassen Sie sich dann die 5 Datensätze mit den größten Häufigkeiten mit der Funktion arrange() nach der absoluten Häufigkeit sortiert anzeigen.
+
+Erstellen Sie einen Vektor mit dem Namen rel, in dem Sie die relativen Häufigkeiten der Marken speichern, wobei Sie keine Nachkommastellen, sondern nur ganzzahlige Prozentsätze abspeichern wollen. Verwenden Sie hierfür die Funktion round(). Speichern Sie das Ergebnis dann in einem Dataframe mit dem Namen rel.df ab. Anschließend lassen Sie sich die häufigsten 7 Marken anzeigen.
+
+Die Anzeige sollte hinterher wie folgt aussehen: ![Univariate Statistik 1](images/univariat1.jpg)
+![Univariate Statistik 2](images/univariat2.jpg)
+![Univariate Statistik 3](images/univariat3.jpg)
+
+```{r 1_1, exercise=TRUE}
+
+```
+
+```{r 1_1-hint-1}
+abs<-table(kfz$Marke, useNA = "ifany")            # NA anzeigen, sofern vorhanden
+abs
+```
+```{r 1_1-hint-2}
+sort(abs, decreasing = TRUE)                      # Absteigend nach Alphabet sortieren
+abs.df<-as.data.frame(abs)                        # Dataframe anlegen
+head(arrange(abs.df,-Freq),5)                     # Absteigend nach Häufigkeit sortieren
+```
+```{r 1_1-hint-3}
+rel<-round(100*prop.table(abs),0)                 # Relative Häufigkeit in %
+rel.df<-as.data.frame(rel)                        # Dataframe anlegen
+head(arrange(rel.df,-Freq),7)                     # Absteigend nach Häufigkeit sortieren
+```
+
+## 2. Verteilungen
+
+Für einige Statistikanwendungen wird eine normale Häufigkeitsverteilung vorausgesetzt. Da Verteilungen der Werte aber auch asymmetrisch sein können, wird die Schiefe (Skewness) und die Wölbung (Kurtosis) einer Verteilung gemessen.
+
+Eine Häufigkeitsverteilung wird in der Regel in Form eines Histogramms dargestellt, in dem alle beobachteten Werte einer Variablen auf der horizontalen Achse abgebildet werden und die Höhe des Balkens angibt, wie häufig dieser Wert vorgekommen ist. Es werden dabei folgende Eigenschaften der Verteilung differenziert:
+
+1. Schiefe (engl. Skew) zeigt die Art und Stärke der Asymmetrie einer Verteilung an (siehe Abb. 4-9 im Buch), entweder eine (a) positive Schiefe (linkssteile oder rechtsschiefe Verteilung) oder (b) negative Schiefe (linksschiefe oder rechtssteile Verteilung). Ob eine Verteilung schief ist, lässt sich auf Basis der Lagemaße Modus, Median und Mittelwert erkennen. Die Funktion skewness() aus dem Paket e1071 berechnet die Schiefe in R.
+
+2. Wölbung (engl. Kurtosis) ist eine Maßzahl für die Steilheit bzw. „Spitzigkeit“ einer Verteilung, entweder (a) steilgipflig (supergaußförmig oder leptokurtisch) oder (b) flachgipflig (subgaußförmig oder platykurtisch).
+
+Normalverteilung versus Schiefe:
+![Schiefe](images/schiefe.jpg)
+
+Wölbung:
+![Wölbung](images/woelbung.jpg)
+
+### 2.1 Schiefe und Wölbung
+
+Ob eine Verteilung schief ist, lässt sich auf Basis der Lagemaße Modus, Median und Mittelwert erkennen. 
+
+Die Funktion skewness() aus dem Paket e1071 berechnet die Schiefe in R.
+
+Der Wert für die Wölbung beträgt im Falle der Normalverteilung 3. Liegt der Wert der Wölbung über 3, dann handelt es sich um eine schmalgipflige, spitze Verteilung und bei Werten kleiner als 3 um eine breitgipflige, flache Verteilung mit Beobachtungen nahe dem Mittelwert.
+
+Um das Ausmaß der Wölbung besser einschätzen zu können, wird die Wölbung einer Verteilung mit der Wölbung einer Normalverteilung verglichen. Für diesen Zweck berechnet man den Exzess als Wölbung minus 3 der Wölbung einer Normalverteilung. Liegt der Wert des Exzesses bei Null, so handelt es sich um eine näherungsweise Normalverteilung. Liegt der Wert über Null, dann handelt es sich um eine schmalgipflige, spitze Verteilung und bei Werten kleiner als Null um eine breitgipflige, flache Verteilung mit Beobachtungen nahe dem Mittelwert.
+
+In R kann die Wölbung mit der Funktion kurtosis() aus dem Paket e1071 berechnet werden.
+
+```{r 2_1-setup, exercise=FALSE, echo=FALSE, include=FALSE}
+sp2 <- as_tibble(studierende[70:85,5])                 # Stichprobe 2 (sp2)
+colnames(sp2) <- "Größe"
+sp2.mean <- mean(sp2$Größe)                            # Mittelwert sp2
+sp2.median <- median(sp2$Größe)                        # Median sp2
+g <- as.data.frame(table(sp2$Größe))                   # table() -> Dataframe
+sp2.modus<-filter(g, Freq == max(g$Freq))$Var1         # Modus sp2
+sp2.modus<-as.numeric(levels(sp2.modus))[sp2.modus]    # Wert von Modus.sp2
+```
+
+```{r 2_1, exercise=TRUE, exercise.setup="2_1-setup"}
+sp2.modus                                              # Modus Stichprobe 2
+sp2.median                                             # Median
+sp2.mean                                               # Mittelwert
+#- Schiefe------------------------------------------------------------------------
+sp2.skewness <- skewness(sp2$Größe)                    # Schiefe
+sp2.skewness
+#- Histogramm---------------------------------------------------------------------
+linien=data.frame(name=c("Median","Mittelwert","Modus"),
+                    wert=c(sp2.median,sp2.mean,sp2.modus),
+                    farbe=c("blue","green","red"),
+                    linie=c(2,1,3),
+                    gross=c(1,2,2))
+ggplot(sp2)+                                           # Histogramm                 
+  aes(x=Größe)+
+  labs(title="Histogramm",subtitle="Stichprobe 2: Positive Schiefe",
+       x="Größe in cm", y="Häufigkeit")+
+  geom_histogram(binwidth=3)+
+  scale_color_manual(name="Kennzahl",labels=linien$name,values=linien$farbe)+
+  geom_vline(data=linien,aes(xintercept=wert,colour=farbe,alpha=0.5),
+             linetype=linien$linie,size=linien$gross,show.legend=F)
+if (sp2.modus>sp2.median & sp2.median<sp2.mean) {
+  if (sp2.skewness<0) 
+    print("Schiefe < 0, Linke Schiefe: negative Schiefe, linksschief, rechtssteil")
+} else if (sp2.modus<sp2.median & sp2.median<sp2.mean) {
+    if (sp2.skewness>0) 
+      print("Schiefe > 0, Rechte Schiefe: positive Schiefe, linkssteil, rechtsschief")
+} else {
+  print("Näherungsweise Normalverteilt")
+}
+#- Kurtosis-----------------------------------------------------------------------
+sp2.kurtosis <- kurtosis(sp2$Größe)
+sp2.kurtosis
+if (sp2.kurtosis<0) { print("Exzess Kurtosis < 0, flachgipflig")
+} else if (sp2.kurtosis>0) { print("Exzess Kurtosis > 0, steilgipflig")
+} else { print("Näherungsweise Normalverteilt")
+}
+#- Beispiel für negative Schiefe und steilgipflige Wölbung------------------------
+daten<-c(88,95,92,97,96,97,96,97,94,86,91,95,97,88,85,76,68)
+hist(daten)
+skewness(daten)                         # Negative Schiefe, da Schiefe < 0
+kurtosis(daten)                         # Steilgipflig, da Exzess Kurtosis > 0
+```
+
+### 2.2 Übung
+
+Der Dataframe kfz enthält mehr als 40.000 Datensätze zu Autos. Ermitteln Sie zunächst den Modus, Median und Mittelwert für die PS-Stärke (Spalte: PS) der Autos. Geben Sie dabei an, das NA-Werte ignoriert werden sollen und speichern Sie die ermittelten Werte in den Variablen ps.modus, ps.median und ps.mean. 
+
+Lassen Sie sich dann ein Histogramm der PS-Stärke anzeigen und zeigen dabei auch den Modus, Median und Mittelwert an. Berechnen Sie im letzten Schritt auch die Schiefe und Kurtosis. Bestätigen die Werte die Erkenntnisse zur Schiefe und Kurtosis, die Sie aus dem Histogramm bereits ersehen konnten? Lassen Sie sich ggfs. anzeigen, ob es sich um eine Linke, Rechte Schiefe oder Normalverteilung handelt.
+
+Die Anzeige sollte hinterher wie folgt aussehen: ![Schiefe-1](images/schiefe1.jpg)
+
+```{r 2_2-setup, exercise=FALSE, echo=FALSE, include=FALSE}
+kfz<-filter(kfz,PS>20 & PS<400)
+```
+
+```{r 2_2, exercise=TRUE, exercise.setup="2_2-setup"}
+
+```
+
+```{r 2_2-hint-1}
+ps.mean<-mean(kfz$PS,na.rm=TRUE)                     # Mittelwert 
+ps.median<-median(kfz$PS,na.rm=TRUE)                 # Median 
+tab <- as.data.frame(table(kfz$PS))                  # table() -> Dataframe
+ps.modus<-filter(tab, Freq == max(tab$Freq))$Var1    # Modus 
+ps.modus<-as.numeric(levels(ps.modus))[ps.modus]     # Wert von Modus
+ps.mean
+ps.median
+ps.modus
+```
+
+Lassen Sie sich dann ein Histogramm der PS-Stärke anzeigen und zeigen dabei auch den Modus, Median und Mittelwert an. 
+
+Die Anzeige sollte hinterher wie folgt aussehen: ![Schiefe-2](images/schiefe2.jpg)
+
+```{r 2_3-setup, exercise=FALSE, echo=FALSE, include=FALSE}
+kfz<-filter(kfz,PS>20 & PS<400)
+ps.mean<-mean(kfz$PS,na.rm=TRUE)                     # Mittelwert 
+ps.median<-median(kfz$PS,na.rm=TRUE)                 # Median 
+tab <- as.data.frame(table(kfz$PS))                  # table() -> Dataframe
+ps.modus<-filter(tab, Freq == max(tab$Freq))$Var1    # Modus 
+ps.modus<-as.numeric(levels(ps.modus))[ps.modus]     # Wert von Modus
+```
+
+```{r 2_3, exercise=TRUE, exercise.setup="2_3-setup"}
+
+```
+
+```{r 2_3-hint-1}
+linien=data.frame(name=c("Median","Mittelwert","Modus"),
+                    wert=c(ps.median,ps.mean,ps.modus),
+                    farbe=c("blue","green","red"),
+                    linie=c(2,1,3),
+                    gross=c(1,2,2))
+ggplot(kfz)+                                         # Histogramm                 
+  aes(x=PS)+
+  labs(title="Histogramm",subtitle="Autos", x="PS", y="Häufigkeit")+
+  geom_histogram(binwidth=5)+
+  scale_color_manual(name="Kennzahl",labels=linien$name,values=linien$farbe)+
+  geom_vline(data=linien,aes(xintercept=wert,colour=farbe,alpha=0.5),
+             linetype=linien$linie,size=linien$gross,show.legend=F)
+```
+
+Berechnen Sie im letzten Schritt auch die Schiefe und Kurtosis. Bestätigen die Werte die Erkenntnisse zur Schiefe und Kurtosis, die Sie aus dem Histogramm bereits ersehen konnten? Lassen Sie sich ggfs. anzeigen, ob es sich um eine Linke, Rechte Schiefe oder Normalverteilung handelt.
+
+Die Anzeige sollte hinterher wie folgt aussehen: ![Schiefe-3](images/schiefe3.jpg)
+
+```{r 2_4-setup, exercise=FALSE, echo=FALSE, include=FALSE}
+kfz<-filter(kfz,PS>20 & PS<400)
+ps.mean<-mean(kfz$PS,na.rm=TRUE)                     # Mittelwert 
+ps.median<-median(kfz$PS,na.rm=TRUE)                 # Median 
+tab <- as.data.frame(table(kfz$PS))                  # table() -> Dataframe
+ps.modus<-filter(tab, Freq == max(tab$Freq))$Var1    # Modus 
+ps.modus<-as.numeric(levels(ps.modus))[ps.modus]     # Wert von Modus
+```
+
+```{r 2_4, exercise=TRUE, exercise.setup="2_4-setup"}
+
+```
+
+```{r 2_4-hint-1}
+ps.skewness<-skewness(kfz$PS)                        # Schiefe
+ps.skewness
+ps.kurtosis<-kurtosis(kfz$PS)                        # Kurtosis
+ps.kurtosis
+```
+```{r 2_4-hint-2}
+if (ps.modus>ps.median & ps.median<ps.mean) {
+    paste("Schiefe",ps.skewness,"< 0, Linke Schiefe: negative Schiefe, linksschief, rechtssteil")
+} else if (ps.modus<ps.median & ps.median<ps.mean) {
+    paste("Schiefe",ps.skewness,"> 0, Rechte Schiefe: positive Schiefe, linkssteil, rechtsschief")
+} else {
+  paste("Schiefe",ps.skewness,"Näherungsweise Normalverteilt")
+}
+```
+
+## 3. Bivariate und Multivariate Statistik
+
+Die bivariate Statistik beschäftigt sich mit zwei Variablen und den Zusammenhängen, die zwischen den beiden Variablen existieren. Die multivariate Statistik untersucht Zusammenhänge von mehr als zwei Variablen. 
+
+Während bei der univariaten Statistik eine Häufigkeitsverteilung betrachtet wird, werden bei der bivariaten Statistik Kontingenztabellen verwendet, um die bedingten Häufigkeiten für jede Wertkombination der Variablen anzuzeigen. Üblich ist die unabhängige Variable in den Spalten und die abhängige Variable in den Zeilen anzuzeigen. In R eignet sich die Funktion table(), um eine Kontingenztabelle zu erstellen. 
+
+Um die relativen Häufigkeiten anzeigen zu lassen, kann auch hier wieder die Funktion prop.table() verwendet werden. Mit dem Parameter margin=1 können auch die Häufigkeiten je Zeile oder mit margin=2 die Häufigkeiten je Spalte ermittelt werden. Um die Summen je Zeile und Spalte hinzuzufügen (Randverteilungen), kann auf eine Kontingenztabelle die Funktion addmargins() angewendet werden. Über den Parameter margin=1 werden die Summen nur für Zeilen und mit margin=2 nur für Spalten hinzugefügt. Um ausschließlich die Randverteilungen angezeigt zu bekommen, ist die Funktion margin.table() geeignet.
+
+```{r 3_1-setup, exercise=FALSE, echo=FALSE, include=FALSE}
+sp3 <- as_tibble(studierende[35:60,c(2,3,5)])    # Stichprobe 3 (sp3)
+```
+
+```{r 3_1, exercise=TRUE, exercise.setup="3_1-setup"}
+head(sp3)                                        # Stichprobe 3 (sp3)
+abs<-table(sp3$Geschlecht, sp3$Größe)            # Absolute Häufigkeit
+abs
+rel<-100*prop.table(abs)                         # Relative Häufigkeit in %
+rel
+round(100*prop.table(abs,margin=1),2)            # Relative Häufigkeit je Zeile
+round(100*prop.table(abs,margin=2),2)            # Relative Häufigkeit je Spalte
+addmargins(abs)                                  # Randverteilungen hinzufügen
+addmargins(rel)
+addmargins(abs)  
+addmargins(abs,margin=1)                         # Randv. hinzufügen für Zeilen
+addmargins(abs,margin=2)                         # Randv. hinzufügen für Spalten
+margin.table(abs)                                # Nur Randverteilung
+margin.table(abs,1)                              # Randv. nur Zeilen
+margin.table(abs,2)                              # Randv. nur Spalten
+```
+
+### 3.1 Gruppierungen
+
+Oft ist es auch interessant eine Funktion auf Gruppierungen anzuwenden, z.B. die durchschnittliche Körpergröße in Abhängigkeit vom Geschlecht. Dafür ist die Funktion tapply() geeignet. Das erste Argument bei dem Funktionsaufruf ist die abhängige Variable, hier Körpergröße, das zweite Argument die Gruppierungsvariable, hier Geschlecht, und die dritte Variable ist die auszuführende Funktion, hier mean. Die Anweisung sieht dann wie folgt aus: tapply(Variable-1,Variable-2,mean). Die Funktion tapply() kann mit beliebigen Funktionen ausgeführt werden, siehe im folgenden Beispiel auch die Anwendung der Funktion summary().
+
+Auch eine multivariate Statistik (mehr als zwei Variablen) lässt sich mit der Funktion tapply() erstellen, z.B. tapply(Variable-1,list(Variable-2,Variable-3),mean), um die Durchschnittsgröße (Variable-1) in Abhängigkeit von Geschlecht (Variable-2) und Alter (Variable-3) zu ermitteln.
+
+```{r 3_2-setup, exercise=FALSE, echo=FALSE, include=FALSE}
+sp3 <- as_tibble(studierende[35:60,c(2,3,5)])    # Stichprobe 3 (sp3)
+```
+
+```{r 3_2, exercise=TRUE, exercise.setup="3_2-setup"}
+tapply(sp3$Größe,sp3$Geschlecht,mean)                 # Gruppenauswertungen 1 unabh.V.
+tapply(sp3$Größe,sp3$Geschlecht,summary)         
+head(sp3,3)
+sp3$Alter <- 2020-sp3$Geburtsjahr                     # Alter berechnen
+head(sp3,3)
+tapply(sp3$Größe,list(sp3$Geschlecht,sp3$Alter),mean) # 2 unabhängige Variablen 
+```
+
+### 3.2 Übung
+
+```{r 3_3-setup, exercise=FALSE, echo=FALSE, include=FALSE}
+kfz<-filter(kfz,Zulassung>2013 & Zulassung<2019 & Marke %in% c("audi","bmw","chrysler","ford","honda","jaguar","volkswagen"))
+```
+
+Der Dataframe kfz enthält Daten zu 2.768 Gebrauchtwagen der Marken Audi, BMW, Chrysler, Ford, Honda, Jaguar und Volkswagen mit einer Zulassung zwischen dem Jahr 2014 und 2018. Lassen Sie sich eine Bivariate Kreuztabelle für Marke und Jahr der Zulassung anzeigen. Geben Sie die werte einmal als absolute Werte (Anzahl) und anschließend als Prozentwerte mit drei Nachkommastellen aus. Lassen Sie sich anschließend auch die Spalten- und Zeilensummen in die beiden Kreuztabellen anzeigen.
+
+Die Anzeige sollte hinterher wie folgt aussehen: ![Kreuztabelle](images/kreuztabelle.jpg)
+
+```{r 3_3, exercise=TRUE, exercise.setup="3_3-setup"}
+
+```
+
+```{r 3_3-hint-1}
+abs<-table(kfz$Marke, kfz$Zulassung)             # Absolute Häufigkeit
+abs
+rel<-round(100*prop.table(abs),3)                # Relative Häufigkeit in %
+rel
+addmargins(abs)                                  # Randverteilungen hinzufügen
+addmargins(rel)
+```
+
+Auch das durchschnittliche Alter dieser Autos in Abhängigkeit von der Marke soll ausgewertet werden. Lassen Sie sich die ersten drei Datensätze des Dataframe anzeigen. Berechnen Sie dann das Alter und fügen eine zusätzliche Spalte in den Dataframe hinzu. Zeigen Sie die ersten drei Datensätze erneut an, jetzt mit der Altersangabe. 
+
+Lassen Sie sich dann das durchschnittliche Alter der Autos in Abhängigkeit von der Marke ausgeben.
+
+Erstellen Sie darüber hinaus noch eine Kontrolltabelle mit den zwei unabhängigen Variablen Marke und Alter, um die durchschnittliche PS-Stärke jeder dieser Gruppierungen anzuzeigen. Zeigen Sie die Kontrolltabelle einmal unverändert und einmal ohne Nachkommastellen an. Die gewünschte Anzeige von Nachkommastellen kann die Übersichtlichkeit erhöhen.
+
+Die Anzeige sollte hinterher wie folgt aussehen: ![Kreuztabelle](images/kontrolltabelle.jpg)
+
+```{r 3_4-setup, exercise=FALSE, echo=FALSE, include=FALSE}
+kfz<-filter(kfz,Zulassung>2013 & Zulassung<2019 & Marke %in% c("audi","bmw","chrysler","ford","honda","jaguar","volkswagen"))
+```
+
+```{r 3_4, exercise=TRUE, exercise.setup="3_4-setup"}
+
+```
+
+```{r 3_4-hint-1}
+head(kfz,3)
+kfz$Alter <- 2021-kfz$Zulassung                         # Alter berechnen (evtl. Jahr anpassen)
+head(kfz,3)
+```
+```{r 3_4-hint-2}
+tapply(kfz$Alter,kfz$Marke,mean)                        # Gruppenauswertungen 1 unabh.V.
+kreuztab<-tapply(kfz$PS,list(kfz$Marke,kfz$Alter),mean) # 2 unabhängige Variablen
+kreuztab
+round(kreuztab,0)
+```
+
+## 4. Abhängigkeiten zwischen Variablen
+
+Eine weit verbreitete Maßzahl, die jedoch nur für 2x2-Kreuztabellen geeignet ist, ist der Phi-Wert, der sich durch das Teilen des Chi-Quadrat-Wertes durch die Anzahl der Werte ergibt und Werte zwischen -1 und 1 annehmen kann. Ein kleiner Phi-Wert bedeutet, dass nur eine geringe Abhängigkeit zwischen den Variablen besteht. Die Funktion phi() aus dem Paket psych ermöglicht die Berechnung des Phi-Wertes. 
+
+Bei der Betrachtung der Gebrauchtwagen aus dem Dataframe autos ergibt sich ein Phi von 0,16, was für eine geringe Abhängigkeit der Variablen Motor (Benzin, Diesel) und Getriebe (manuell, automatik) spricht.
+
+Eine weitere Maßzahl der Abhängigkeit ist die Odds Ratio (OR), die jedoch nur auf zwei nominale oder ordinale Variablen anwendbar ist. Ein Wert von 1 bedeutet keine Abhängigkeit und umso mehr die Odds Ratio von 1 abweicht, desto stärker ist die Abhängigkeit der Variablen. Die Odds Ratio kann mit der Funktion oddsratio() aus dem Paket vcd berechnet werden. Der Wert der Odds Ratio von 2,21 bestätigt eine Abhängigkeit (Wert von Variable 1 hat einen positiven Einfluss auf Variable 2) und besagt, dass Dieselfahrzeuge relativ häufiger ein Automatik-Getriebe haben als Autos, die mit Benzin fahren. 
+
+Aus der Odds Ratio lässt sich über die Formel Q=(OR-1)/(OR+1) der Yules-Koeffizient Q berechnen, der leichter zu interpretieren ist, da Null bedeutet, dass keine Abhängigkeit besteht und die Abweichung von Null nach oben oder unten die Stärke und Richtung einer Abhängigkeit anzeigt. Der Yules-Koeffizient Q kann mit der Funktion Yule() aus dem Paket psych berechnet werden. Der Yules-Koeffizient von 0,37 bestätigt die positive Abhängigkeit. 
+
+```{r 4_1, exercise=FALSE}
+autos.bd <- filter(autos,autos$Motor=="benzin"    # Dataframe mit Binärer Var
+                  |autos$Motor=="diesel")         # für Motor
+autos.bd <- droplevels(autos.bd)                  # Nicht verwendete Levels entf.
+tab <- table(autos.bd$Motor,autos.bd$Getriebe)    # Kreuztabelle 
+tab
+psych::phi(tab,digits=2)                          # Phi berechnen
+vcd::oddsratio(tab,log=F)                         # Odds Ratio berechnen
+psych::Yule(tab)                                  # Yule berechnen
+```
+
+## 5. Korrelation
+
+Um die Abhängigkeit zweier Variablen weiter zu untersuchen, eignet sich die Berechnung der Korrelation. 
+
+Eine Korrelation gibt die Richtung (positiv bzw. negativ) und Stärke einer linearen Abhängigkeit zwischen zwei Variablen an. Eine positive Korrelation liegt vor, wenn hohe Werte der Variablen A mit hohen Werten der Variablen B einhergehen (siehe Abb. 4-12 im Buch). Eine negative Korrelation besteht, wenn hohe Werte der Variablen A mit niedrigen Werten der Variablen B einhergehen (siehe Abb. 4-13 im Buch). Die Stärke einer Korrelation wird über den Korrelationskoeffizienten ausgedrückt, der zwischen -1 (starke negative Korrelation) und +1 (starke positive Korrelation) liegt. Eine Korrelation ist dann stärker, wenn die Steigung der Korrelationsfunktion sich der -1 bzw. +1 annähert.
+
+Ein Wert von 0 bedeutet, dass keine Korrelation besteht und je weiter ein Wert nach oben oder unten von 0 abweicht, umso stärker ist die Korrelation (siehe Abb. 4-14 im Buch).
+
+Ein Korrelationskoeffizient sollte jedoch nicht isoliert betrachtet werden, denn Ausreißer oder auch die Verteilung können die Berechnung stark beeinflussen. Daher sollte der Korrelationskoeffizient immer gemeinsam mit dem zugehörigen Plot betrachtet werden.
+
+Korrelationsbeispiele:![Korrelation](images/korrelation1.jpg)
+
+Im Plot oben links scheinen die Variablen normalverteilt zu sein. Der Plot oben rechts zeigt auch einen Zusammenhang der Variablen, jedoch keinen linearen. Der Plot unten links zeigt eine perfekte lineare Korrelation der beiden Variablen an, die Berechnung wird jedoch durch den Ausreißer stark beeinflusst. Der Plot unten rechts zeigt, wie bereits ein einzelner extremer Ausreißer einen Korrelationskoeffizienten ergibt, der ungeeignet erscheint. Daher sollte der Korrelationskoeffizient immer gemeinsam mit dem zugehörigen Plot betrachtet werden, um Fehlinterpretationen zu vermeiden.
+
+Eine Voraussetzung für die Signifikanz eines Pearson Korrelationskoeffizienten ist die Erfüllung folgender Bedingungen: 
+
+1. Bivariate Normalverteilung: Die bivariate Normalverteilung (auch zwei-dimensionale Normalverteilung) beschreibt eine Normalverteilung der einen Variable für jeden Wert der anderen Variable.
+2. Homoskedastizität (gleichmäßige Streuung beider Variablen).
+3. Keine Ausreißer.
+4. Keine Cluster.
+
+Die nachfolgende Abbildung zeigt die Berechnung der Korrelationskoeffizienten basierend auf Informationen zu zweitausend Gebrauchtwagen. Eine negative Korrelation zwischen Kilometerstand und Preis bringt zum Ausdruck, dass der Preis mit steigendem Kilometerstand sinkt. Eine ebenfalls negative Korrelation zwischen dem Alter eines Gebrauchtwagens und dem Preis bringt zum Ausdruck, dass der Preis mit steigendem Alter sinkt. Eine positive Korrelation zwischen PS und Preis drückt aus, dass Gebrauchtwagen mit mehr PS einen höheren Preis erzielen.
+
+![Korrelation](images/korrelation2.jpg)
+
+Wichtig ist grundsätzlich zu verstehen, dass eine statistisch signifikante Korrelation niemals ein Beleg für eine Kausalität, also einen Ursache-Wirkungs-Zusammenhang, feststellt. Eine statistisch signifikante Korrelation bestätigt jedoch eine Abhängigkeit der Variablen und diese zu kennen, kann sehr wertvoll sein.
+
+### 5.1 Pearson, Spearman und Kendall Korrelation
+
+In Abhängigkeit vom Typ der Variablen werden die Maßzahlen der Korrelation mit unterschiedlichen Verfahren berechnet (siehe Abb. 4-17 im Buch). In R kann für Intervallvariablen der Pearson-Korrelationskoeffizient r mit Hilfe der Funktion cor() berechnet werden. Eine geschicktere Berechnung und Ausgabe erfolgt jedoch durch die Funktion correlate() aus dem Paket corrr. 
+
+Für ordinalskalierte Variablen wird entweder der Spearman-Rangkorrelationskoeffizient rs (Spearman’s Rho) oder der Kendall-Rangkorrelationskoeffizient T (Kendall’s Tau) berechnet. Die Korrelationen nach Spearman und Kendall können ebenfalls mit der Funktion cor() bzw. correlate() berechnet werden, wenn der Parameter method=“spearman“ bzw. method=“kendall“ verwendet wird. Im nachfolgenden Beispiel wird die ordinalskalierte Variable der Kategorie mit der Verhältnisvariablen PS betrachtet.
+
+Die Effektstärke einer Korrelation wird ab 0,1 bzw. -0,1 als relevant, jedoch als schwach betrachtet, ab 0,3 bzw. -0,3 als mittelstark und ab 0,5 bzw. -0,5 als stark. In diesem Fall ist die Effektstärke stark.
+
+```{r 5_2, exercise=FALSE}
+autos<-autos[1:1000,]
+cor(autos[,c("Kilometer","Preis")],use="na.or.complete")   # Pearson
+corrr::correlate(autos[,c("Kilometer","Preis")])           # Pearson
+str(autos$Kategorie)                                       # Ordinalvariable(=Ord.factor)
+levels(autos$Kategorie)
+autos$Kategorie.n <- as.numeric(autos$Kategorie)           # Faktor->Numerisch
+correlate(autos[,c("PS","Kategorie.n")],method="spearman") # Spearman
+correlate(autos[,c("PS","Kategorie.n")],method="kendall")  # Kendall
+```
+
+Ein steigender Kilometerstand geht offensichtlich mit einem sinkenden Preis einher (mittelstarke negative Korrelation von -0.3934809 für Pearson). Eine höhere Kategorie (1=Neuwertig, 2=Mittelalt, 3=Alt, 4=Oldtimer) geht offensichtlich mit sinkender PS-Zahl einher (schwache negative Korrelation von -0.2231485	für Spearman wird bestätigt mit einer schwachen negativen Korrelation von -0.177858 für Kendall).
+
+### 5.2 Korrelationsmatrix
+
+Auch für eine Vielzahl an Variablen, die in Form einer Matrix vorliegen, kann die Funktion correlate() angewendet werden, um eine Korrelationsmatrix zu berechnen, die den Korrelationskoeffizienten zwischen allen Variablen ermittelt. Am Beispiel des Dataframes mtcars aus dem Paket MASS kann dies gut demonstriert werden. Der Dataframe beinhaltet Spalten mit Angaben zum Verbrauch (mpg, Meilen pro Gallone), der Anzahl Zylinder (cyl), des Hubraums in Kubik-cm (disp), der PS (hp), des Gewichts in kg (wt), der Beschleunigung in Sekunden für ¼ Meile (qsec), der Übertragung (am, 1=Automatik, 2=Schaltgetriebe) und der Anzahl der Gänge (gear). 
+
+Ergänzend zu der Funktion correlate() können die Ergebnisse der Korrelationsmatrix mit der Funktion rearrange() so angeordnet werden, dass ähnlich korrelierte Variablen in Clustern angezeigt werden. Da eine Korrelationsmatrix alle Koeffizienten im Spiegelbild doppelt anzeigt, eignet sich die Funktion shave() dazu die gespiegelten, redundanten Werte mit NA anzuzeigen. Wird anschließend die Funktion fashion() auf das Ergebnis der Funktion shave() angewendet, so werden die NAs komplett entfernt. Die graphische Ausgabe der Korrelationsmatrix kann mit Hilfe der Funktion rplot() erfolgen. 
+
+```{r 5_3-setup, exercise=FALSE, echo=FALSE, include=FALSE}
+data(mtcars)                                       # Daten importieren aus MASS
+mtcars$l100km <-round(235.215/mtcars$mpg,1)        # Verbrauch mpg -> l/100km
+mtcars$disp <- round(16.387*mtcars$disp,0)         # Hubraum Kubik-Inch -> ccm 
+mtcars$wt <- round(0.453592*mtcars$wt*1000,0)      # Gewicht Pfund -> kg
+mtcars<-dplyr::select(mtcars,-mpg,-drat,-vs,-carb,-am) # Spalten entfernen
+```
+
+```{r 5_3, exercise=TRUE, exercise.setup="5_3-setup"}
+mtcars[14:21,]                                              # Anzeige
+round(cor(mtcars),2)                                        # Korrelationsmatrix cor()
+corrr::correlate(mtcars)                                    # Korrelationsmatrix correlate()
+corrr::rearrange(corrr::correlate(mtcars))                  # Clustern ähnlicher Werte
+r<-corrr::shave(corrr::rearrange(corrr::correlate(mtcars))) # Auf Dreieck reduzieren
+r                                                           # Ausgabe
+corrr::fashion(corrr::shave(corrr::rearrange(corrr::correlate(mtcars)))) # Anzeige 2 Nachkommastellen
+corrr::rplot(r,print_cor = TRUE)                            # Ausgabe als Grafik
+```
+
+Offensichtlich ist der Verbrauch in Litern je 100 Kilometer (l100km) positiv korreliert mit dem Hubraum (disp), der Anzahl der Zylinder (cyl), dem Gewicht (wt) und den PS (hp). Mit größerem Hubraum, Gewicht und steigender Anzahl der Zylinder und PS steigt offensichtlich der Literverbrauch je 100 Kilometern. Eine negative Korrelation existiert z.B. zwischen den PS (hp) und der Beschleunigung (qsec). Mehr PS führen also zu einer geringeren Anzahl an Sekunden, um eine Viertelmeile zu fahren. Eine vernachlässigbare Korrelation existiert offenbar zwischen der Beschleunigung (qsec) und dem Gewicht (wt) oder der Anzahl Gänge (gear) und den PS (hp). Eine Korrelationsmatrix ermöglicht eine schnelle Übersicht über die Korrelationen der betrachteten Variablen.
+
+### 5.3 Plotmatrix
+
+Eine weitere Möglichkeit die Beziehung zwischen Variablen zu analysieren ist eine Plotmatrix, die neben dem Korrelationskoeffizienten bei mindestens einer numerischen Variablen noch zwei weitere Plots abhängig vom Variablentyp anzeigt, z.B. einen Scatterplot und eine Verteilungsfunktion. Dies wird durch die Funktion ggpairs() aus dem Paket GGally unterstützt.
+
+```{r 5_4-setup, exercise=FALSE, echo=FALSE, include=FALSE}
+data(mtcars)                                       # Daten importieren aus MASS
+mtcars$l100km <-round(235.215/mtcars$mpg,1)        # Verbrauch mpg -> l/100km
+mtcars$disp <- round(16.387*mtcars$disp,0)         # Hubraum Kubik-Inch -> ccm 
+mtcars$wt <- round(0.453592*mtcars$wt*1000,0)      # Gewicht Pfund -> kg
+mtcars<-dplyr::select(mtcars,-mpg,-drat,-vs,-carb) # Spalten entfernen
+```
+
+```{r 5_4, exercise=TRUE, exercise.setup="5_4-setup"}
+ggpairs(mtcars,columns=c("l100km","am","hp"))      # Cor für numerische Variablen
+autos <- autos[1:50,]                              # Reduktion auf 50 Datensätze
+ggpairs(autos, columns=c("Preis","Kilometer","Kategorie"), aes(fill=Kategorie))
+```
+
+### 5.4 Signifikanz
+
+Weiter oben wurde bereits die Funktion cor() vorgestellt. Wenn man neben der Korrelation auch noch deren Signifikanz ermitteln möchte, dann kann man die Funktion cor.test() verwenden, welche sowohl die Korrelation berechnet als auch deren Signifikanz. Um einen ersten Eindruck zu bekommen ist oft ein Plot der betrachteten Variablen hilfreich. 
+
+Angenommen die Variablen mpg (Miles per Gallon) und wt (Gewicht) aus dem Dataframe mtcars sollen betrachtet werden. Einen Plot erstellt man mit der Funktion plot(). Aus dem Plot ist erkennbar, dass mit zunehmendem Gewicht die Miles per Gallon abnehmen, was für eine negative Korrelation spricht. 
+
+Berechnet man den Korrelationskoeffizienten nach Pearson, so ergibt sich -0,86 als Wert. Die Effektstärke einer Korrelation wird ab 0,1 bzw. -0,1 als relevant, jedoch als schwach betrachtet, ab 0,3 bzw. -0,3 als mittelstark und ab 0,5 bzw. -0,5 als stark. In diesem Fall ist die Effektstärke stark.
+
+Die Signifikanz wird in der Variablen p angegeben und ist mit p=1,29e-10 sehr klein. Wenn p kleiner als das gewählte Signifikanzniveau liegt, welches üblicherweise bei 0,05 liegt, dann kann die Null-Hypothese verworfen werden. In diesem Fall wäre die Nullhypothese, dass es keinen Zusammenhang zwischen Gewicht und Miles per Gallon gibt. Wenn die Nullhypothese verworfen wird, dann folgt daraus, dass die Alternativhypothese einer Korrelation zwischen Gewicht und Verbrauch nicht verworfen, sondern angenommen wird. 
+
+Für die untersuchte Stichprobe existiert offensichtlich eine signifikante, starke Korrelation zwischen Gewicht und Verbrauch.
+
+```{r 5_5, exercise=TRUE}
+data(mtcars)                                       # Daten importieren aus MASS
+plot(mtcars$wt, mtcars$mpg)                        # Plot
+cor(mtcars$wt, mtcars$mpg)                         # Pearson
+cor.test(mtcars$wt, mtcars$mpg)                    # Pearson mit Signifikanz
+```
+
+### 5.4 Übung 1
+
+```{r 5_6-setup, exercise=FALSE, echo=FALSE, include=FALSE}
+data(autos)
+autos<-autos[1:1000,]
+```
+
+Untersuchen Sie welche Korrelation zwischen Kategorie und Preis besteht. Untersuchen Sie in einem zweiten Schritt die Korrelation zwischen Kategorie und Alter. Betrachten Sie in beiden Fällen die Signifikanz des Ergebnisses.
+
+Die Anzeige sollte hinterher wie folgt aussehen: ![KorrelationUebung1](images/korrelationuebung1.jpg)
+![KorrelationUebung2](images/korrelationuebung2.jpg)
+
+```{r 5_6, exercise=TRUE, exercise.setup="5_6-setup"}
+
+```
+
+```{r 5_6-hint-1}
+autos$Kategorie.n <- as.numeric(autos$Kategorie)              # Faktor->Numerisch erforderlich
+#correlate(autos[,c("Preis","Kategorie.n")],method="spearman")# Spearman
+cor.test(autos$Preis, autos$Kategorie.n, method="spearman")   # Spearman mit Signifikanz
+#correlate(autos[,c("Preis","Kategorie.n")],method="kendall") # Kendall
+cor.test(autos$Preis, autos$Kategorie.n, method="kendall")    # Kendall mit Signifikanz
+```
+```{r 5_6-hint-2}
+#correlate(autos[,c("Alter","Kategorie.n")],method="spearman")# Spearman
+cor.test(autos$Alter, autos$Kategorie.n, method="spearman")   # Spearman mit Signifikanz
+#correlate(autos[,c("Alter","Kategorie.n")],method="kendall") # Kendall
+cor.test(autos$Alter, autos$Kategorie.n, method="kendall")    # Kendall mit Signifikanz
+```
+
+Erkenntnisse der Untersuchung der Korrelation zwischen Preis und Kategorie:
+
+1. Spearman: Die Signifikanz ist mit p=2.2e-16 sehr klein, also sehr viel kleiner als die typische Verwerfungsgrenze von 0,05. Die Nullhypothese keines Zusammenhanges kann demnach verworfen werden. Folglich wird die Alternativhypothese eines korrelativen Zusammenhanges zwischen Preis und Kategorie angenommen. Der Spearman-rho von -0.5261875 spricht für eine starke negative Korrelation. 
+2. Kendall: Die Signifikanz ist mit p=2.2e-16 sehr klein, also sehr viel kleiner als die typische Verwerfungsgrenze von 0,05. Die Nullhypothese keines Zusammenhanges kann demnach verworfen werden. Folglich wird die Alternativhypothese eines korrelativen Zusammenhanges zwischen Preis und Kategorie angenommen. Der Kendall-Tau von -0.4305736 spricht für eine mittelstarke negative Korrelation.
+
+Erkenntnisse der Untersuchung der Korrelation zwischen Alter und Kategorie:
+
+1. Spearman: Die Signifikanz ist mit p=2.2e-16 sehr klein, also sehr viel kleiner als die typische Verwerfungsgrenze von 0,05. Die Nullhypothese keines Zusammenhanges kann demnach verworfen werden. Folglich wird die Alternativhypothese eines korrelativen Zusammenhanges zwischen Alter und Kategorie angenommen. Der Spearman-rho von 0.8740683 spricht für eine starke positive Korrelation.
+2. Kendall: Die Signifikanz ist mit p=2.2e-16 sehr klein, also sehr viel kleiner als die typische Verwerfungsgrenze von 0,05. Die Nullhypothese keines Zusammenhanges kann demnach verworfen werden. Folglich wird die Alternativhypothese eines korrelativen Zusammenhanges zwischen Alter und Kategorie angenommen. Der Kendall-Tau von 0.7724315 spricht für eine starke positive Korrelation.
+
+Wenn Sie die letzte Hypothese geringfügig abwandeln und nur prüfen wollen, ob ein höheres Alter auch eine höhere Kategorie bedeutet, dann können Sie mit dem Parameter alternative="greater" oder alternative="less" diese auch als gerichtete, einseitige Hypothese überprüfen. Der Zusatz "greater" prüft, ob bei höherer Kategorie das Alter größer ist. Wie nachfolgend erkennbar wird bei p=2.2e-16 diese Nullhypothese ebenfalls verworfen und somit die Korrelation von 0.7724315 bestätigt. Der Zusatz "less" prüft, ob bei höherer Kategorie das Alter geringer ist. Wie nachfolgend erkennbar wird bei p=1 diese Nullhypothese nicht verworfen. Demnach kann nicht bestätigt werden, dass das Alter bei höherer Kategorie sinkt.
+
+```{r 5_7-setup, exercise=FALSE, echo=FALSE, include=FALSE}
+data(autos)
+autos<-autos[1:1000,]
+autos$Kategorie.n <- as.numeric(autos$Kategorie)              # Faktor->Numerisch erforderlich
+```
+
+```{r 5_7, exercise=FALSE, exercise.setup="5_7-setup"}
+cor.test(autos$Alter, autos$Kategorie.n, method="kendall", alternative="greater") # Kendall Einseitig mit Signifikanz
+cor.test(autos$Alter, autos$Kategorie.n, method="kendall", alternative="less")    # Kendall Einseitig mit Signifikanz
+```
+
+### 5.5 Übung 2
+
+```{r 5_8-setup, exercise=FALSE, echo=FALSE, include=FALSE}
+data(autos)
+```
+
+Untersuchen Sie welche Korrelation zwischen PS und Preis besteht. Betrachten Sie dabei auch die Signifikanz des Ergebnisses.
+
+Die Anzeige sollte hinterher wie folgt aussehen: ![KorrelationUebung3](images/korrelationuebung3.jpg)
+
+```{r 5_8, exercise=TRUE, exercise.setup="5_8-setup"}
+
+```
+
+```{r 5_8-hint-1}
+cor.test(autos$PS, autos$Preis)   # Pearson mit Signifikanz
+```
+
+Es existiert eine signifikante starke Korrelation von 0.5769626 zwischen PS und Preis.
+
+## 6. Quiz
+
+```{r 5_1, echo = FALSE}
+quiz(
+  question("Welche der folgenden Aussagen sind korrekt?", allow_retry = TRUE, random_answer_order = TRUE,
+    answer("Univariate und Bivariate Statistik betrachten eine Variable mit zwei unterschiedlichen Methoden.", message = "Nein, Bivariate Statistik betrachtet zwei Variablen."),
+    answer('Die Anweisung sort(abs, decreasing=T) sortiert den Vektor abs absteigend. Soll der Vektor aufsteigend sortiert werden, kann der Parameter "decreasing=T" weggelassen werden.', message = "Die Funktion arrange() kann ebenfalls zur Sortierung verwendet werden.", correct = TRUE),
+    answer('Der Parameter useNA = "always" in der Funktion table() bestimmt, dass Werte mit NA immer ignoriert werden.', message = 'Nein, useNA = "always" soft dafür, dass Werte mit NA immer angezeigt werden.'),
+    type = "multiple"
+  ),
+  question("Welche der folgenden Aussagen sind korrekt?", allow_retry = TRUE, random_answer_order = TRUE,
+    answer("Die Funktion table(studierende$Größe) erstellt eine Tabelle der relativen Häufigkeiten für die Variable Größe des Dataframes studierende.", message = "Nein, table() erstellt eine Tabelle der absoluten Häufigkeiten. Die Funktion prop.table() zeigt die relativen Häufigkeiten an."),
+    answer("Wölbung (engl. Kurtosis) zeigt die Art und Stärke der Asymmetrie einer Verteilung an. Ob eine Verteilung asymmetrisch ist, lässt sich auf Basis der Lagemaße Modus, Median und Mittelwert erkennen", message = 'Nein, Schiefe (engl. Skew) zeigt die Art und Stärke der Asymmetrie eine Verteilung an. Ob eine Verteilung schief ist, lässt sich auf Basis der Lagemaße Modus, Median und Mittelwert erkennen'),
+    answer("Wölbung gibt an, ob eine Verteilung leptokurtisch oder platykurtisch ist.", correct = TRUE),
+    type = "multiple"
+  ),
+  question("Welche der folgenden Aussagen sind korrekt?", allow_retry = TRUE, random_answer_order = TRUE,
+    answer("Wenn der Mittelwert kleiner als der Median und der Median kleiner als der Modus ist, dann handelt es sich um eine Schiefe kleiner als Null und eine Linke Schiefe.", correct = TRUE),
+    answer("Der Wert für die Wölbung beträgt im Falle der Normalverteilung 0.", message = "Nein, Der Wert für die Wölbung beträgt im Falle der Normalverteilung 3."),
+    answer("Die Funktion skewness() aus dem Paket e1071 berechnet die Schiefe und die Funktion kurtosis() berechnet die Wölbung in R.", correct = TRUE),
+    type = "multiple"
+  ),
+  question("Welche der folgenden Aussagen sind korrekt?", allow_retry = TRUE, random_answer_order = TRUE,
+    answer("Die Exzess Kurtosis berechnet sich als Wölbung (Kurtosis) minus 3, da 3 der Wert der Wölbung einer Normalverteilung ist. Liegt der Wert der Exzess Kurtosis bei Null, so handelt es sich um eine näherungsweise Normalverteilung.", correct = TRUE),
+    answer("Liegt der Wert der Exzess Kurtosis über Null, dann handelt es sich um eine schmalgipflige, spitze Verteilung und bei Werten kleiner als Null um eine breitgipflige, flache Verteilung.", correct = TRUE),
+    answer("Die Multivariate Statistik untersucht Zusammenhänge von zwei Variablen.", message = "Nein, Die multivariate Statistik untersucht Zusammenhänge von mehr als zwei Variablen. Die Bivariate Statistik untersucht zwei Variablen."),
+    answer("Kontingenztabellen werden verwendet, um die bedingten Häufigkeiten für jede Wertkombination von mindestens zwei Variablen anzuzeigen. Üblich ist die unabhängige Variable in den Spalten und die abhängige/n Variable/n in den Zeilen anzuzeigen.", correct = TRUE),
+    answer('Die Anweisung "tapply(sp3$Größe,sp3$Geschlecht,mean)" zeigt die durchschnittliche Körpergröße in Abhängigkeit vom Geschlecht an.', correct = TRUE),
+    answer("Die Funktion table() eignet sich, um eine Kontingenztabelle zu erstellen.", correct = TRUE),
+    type = "multiple"
+  ),
+  question("Welche der folgenden Aussagen sind korrekt?", allow_retry = TRUE, random_answer_order = TRUE,
+    answer("Eine Korrelation gibt die Richtung (positiv bzw. negativ) und Stärke einer linearen Abhängigkeit zwischen zwei Variablen an. Eine negative Korrelation liegt vor, wenn hohe Werte der Variablen A mit hohen Werten der Variablen B einhergehen. Eine positive Korrelation besteht, wenn hohe Werte der Variablen A mit niedrigen Werten der Variablen B einhergehen.", message = "Ja, eine Korrelation gibt die Richtung (positiv bzw. negativ) und Stärke einer linearen Abhängigkeit zwischen zwei Variablen an. Aber, eine positive Korrelation liegt vor, wenn hohe Werte der Variablen A mit hohen Werten der Variablen B einhergehen und Eine negative Korrelation besteht, wenn hohe Werte der Variablen A mit niedrigen Werten der Variablen B einhergehen."),
+    answer(" Die Stärke einer Korrelation wird über den Korrelationskoeffizienten ausgedrückt, der zwischen 0 und 1 liegt.", message = "Nein, die Stärke einer Korrelation wird über den Korrelationskoeffizienten ausgedrückt, der zwischen -1 (starke negative Korrelation) und +1 (starke positive Korrelation) liegt."),
+    answer("Ein Korrelationskoeffizient ist für sich aussagekräftig, denn Ausreißer oder auch die Verteilung sind darin umfassend berücksichtigt.", message = "Nein, ein Korrelationskoeffizient sollte nicht isoliert betrachtet werden, denn Ausreißer oder auch die Verteilung können die Berechnung stark beeinflussen. Daher sollte der Korrelationskoeffizient immer gemeinsam mit dem zugehörigen Plot betrachtet werden."),
+    answer("Voraussetzung für die Signifikanz eines Pearson Korrelationskoeffizienten ist die Erfüllung folgender Bedingungen: Bivariate Normalverteilung, gleichmäßige Streuung beider Variablen, keine Ausreißer und keine Cluster.", correct = TRUE),
+    answer('Eine statistisch signifikante Korrelation ist ein Beleg für eine Kausalität, also einen Ursache-Wirkungs-Zusammenhang.', message = "Nein, eine statistisch signifikante Korrelation kann niemals ein Beleg für eine Kausalität, also einen Ursache-Wirkungs-Zusammenhang sein. Eine statistisch signifikante Korrelation bestätigt jedoch eine Abhängigkeit der Variablen und diese zu kennen, kann sehr wertvoll sein."),
+    answer(" In R kann für Ordinalvariablen der Pearson-Korrelationskoeffizient r mit Hilfe der Funktion cor() oder correlate() berechnet werden.", message = "Nein, der Pearson-Korrelationskoeffizient lässt sich nur für Intervallvariablen berechnen."),
+    type = "multiple"
+  ),
+  question("Welche der folgenden Aussagen sind korrekt?", allow_retry = TRUE, random_answer_order = TRUE,
+    answer('Die Anweisung "corrr::correlate(mtcars)" erstellt eine Korrelationsmatrix für alle Variablen des Dataframe mtcars.', correct = TRUE),
+    answer("Eine Korrelationsmatrix zeigt im alle Koeffizienten im Spiegelbild doppelt an.", message = "Die Anwendung der Funktion shave() und fashion() auf eine Korrelationsmatrix entfernt alle gespiegelten Werte.", correct = TRUE),
+    answer("Die Funktion ggpairs() aus dem Paket GGally gibt eine Korrelationsmatrix aus.", message = "Nein, sie gibt eine Plotmatrix aus, die neben dem Korrelationskoeffizienten bei mindestens einer numerischen Variablen noch zwei weitere Plots abhängig vom Variablentyp anzeigt, z.B. einen Scatterplot und eine Verteilungsfunktion."),
+    type = "multiple"
+  ),
+  question("Welche der folgenden Aussagen sind korrekt?", allow_retry = TRUE, random_answer_order = TRUE,
+    answer('Die Funktion cor.test() berechnet sowohl die Korrelation als auch deren Signifikanz.', correct = TRUE),
+    answer("Die Effektstärke einer Korrelation wird ab 0,3 bzw. -0,3 als relevant betrachtet.", message = "Nein, die Effektstärke einer Korrelation wird ab 0,1 bzw. -0,1 als relevant, jedoch als schwach betrachtet, ab 0,3 bzw. -0,3 als mittelstark und ab 0,5 bzw. -0,5 als stark."),
+    answer("Wenn das Ergebnis der Funktion cor.test() ein p ergibt, welches kleiner als das gewählte Signifikanzniveau liegt (üblich ist 0,05), dann kann die Null-Hypothese verworfen werden.", correct = TRUE),
+    type = "multiple"
+  ),
+  question("Welche der folgenden Aussagen sind korrekt?", allow_retry = TRUE, random_answer_order = TRUE,
+    answer("Die Funktion phi() aus dem Paket psych ermöglicht die Berechnung des Phi-Wertes. Ein großer Phi-Wert bedeutet, dass nur eine geringe Abhängigkeit zwischen den Variablen besteht.", message = "Nein, die Funktion phi() ist in dem Paket psych enthalten, aber ein kleiner Phi-Wert bedeutet, dass nur eine geringe Abhängigkeit zwischen den Variablen besteht."),
+    answer(" Odds Ratio (OR) lässt sich nur auf zwei nominale oder ordinale Variablen anwenden. Ein Wert von 1 bedeutet keine Abhängigkeit und umso mehr die Odds Ratio von 1 abweicht, desto stärker ist die Abhängigkeit der Variablen. Die Odds Ratio kann mit der Funktion oddsratio() aus dem Paket vcd berechnet werden.", correct = TRUE),
+    answer("Der Yules-Koeffizient Q kann aus der Odds Ratio berechnet werden und die Funktion Yule() aus dem Paket psych berechnet Q. Ist der Yules-Koeffizient Null, so besteht keine Abhängigkeit der Variablen. Eine Abweichung von Null nach oben oder unten zeigt die Stärke und Richtung einer Abhängigkeit an.", correct = TRUE),
+    answer("Für ordinalskalierte Variablen wird entweder der Spearman-Rangkorrelationskoeffizient rs (Spearman’s Rho) oder der Kendall-Rangkorrelationskoeffizient T (Kendall’s Tau) mit der Funktion cor() bzw. correlate() berechnet.", correct = TRUE),
+    type = "multiple"
+  )
+)
+```
+
+## Ende 
+
+Gratulation!
+
+Sie haben dieses Tutorial erfolgreich ausgeführt und einen Einblick in die Univariate, Bivariate und Multivariate Statistik erhalten und insbesondere auch die Besonderheiten von Verteilungen ebenso wie die Abhängigkeiten zwischen Variablen kennengelernt.

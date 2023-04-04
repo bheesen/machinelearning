@@ -1,0 +1,151 @@
+---
+title: "Syntax"
+author: "Tutorial von [Professor Bernd Heesen](http://www.prescient.pro), dem Autor des Buches [Künstliche Intelligenz und Machine Learning mit R](https://www.amazon.de/Data-Science-Statistik-mit-Anwendungsl%C3%B6sungen/dp/3658348240/ref=sr_1_1?__mk_de_DE=%C3%85M%C3%85%C5%BD%C3%95%C3%91&dchild=1&keywords=Data+Science+und+Statistik+mit+R&qid=1627898747&sr=8-1)"
+date: "Version vom 4.4.2023"
+output: 
+  learnr::tutorial:
+    progressive: TRUE
+    allow_skip: TRUE
+    language: de
+runtime: shiny_prerendered
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(learnr)
+```
+
+## Willkommen
+
+Dieses Tutorial ergänzt die Inhalte des Buches [Künstliche Intelligenz und Machine Learning mit R](https://www.amazon.de/Data-Science-Statistik-mit-Anwendungsl%C3%B6sungen/dp/3658348240/ref=sr_1_1?__mk_de_DE=%C3%85M%C3%85%C5%BD%C3%95%C3%91&dchild=1&keywords=Data+Science+und+Statistik+mit+R&qid=1627898747&sr=8-1).
+
+Das Kapitel 5 im Buch beschreibt die Syntax von R.
+
+## 1. Wertzuweisung
+
+### 1.1 Demo
+
+Wertzuweisungen erfolgen in R mit Hilfe des Zuweisungsoperators <-. Um einer Variablen x den Wert 3 zuzuweisen wäre daher die Anweisung x <- 3 korrekt. Der Wert einer Variablen kann angezeigt werden, indem eine Zeile mit dem Namen der Variablen vom R-Interpreter ausgeführt wird.
+
+```{r 1_1, exercise=FALSE}
+a <- 24 - 5
+a
+```
+
+### 1.2 Übung
+
+Weisen Sie der Variablen x den Wert 3 zu und lassen Sie sich anschließend den Wert von x anzeigen.
+
+Kommentare (nicht ausgeführtes Coding) wird in R durch das #-Symbol eingeleitet.
+
+```{r 1_2, exercise=TRUE}
+x <- 3                   # gutes Beispiel einer Wertzuweisung
+x                        # Ausgabe von x
+```
+
+### 1.3 Übung
+
+Weisen Sie der Variablen y den Wert 1 zu und lassen Sie sich anschließend den Wert von y anzeigen.
+
+```{r 1_3, exercise=TRUE}
+
+```
+
+<div id="1_3-hint">
+**Hint:** Tippen Sie "y <- 1" und anschließend "y", um den Wert zuzuweisen und das Ergebnis angezeigt zu bekommen.
+</div>
+
+### 1.4 Übung
+
+Erstellen Sie die Variable mit dem Namen "klausurnoten", welche sich aus x und y zusammensetzt.
+Lassen Sie sich anschließend die Variable "klausurnoten" anzeigen, die 3 und 1 anzeigen sollte.
+
+```{r 1_4-setup, exercise=FALSE, echo=FALSE, include=FALSE}
+x <- 3
+y <- 1 
+```
+
+
+```{r 1_4, exercise=TRUE, exercise.setup="1_4-setup"}
+klausurnoten <- ...
+
+```
+
+<div id="1_4-hint">
+**Hint:** Tippen Sie "klausurnoten <- c(x,y)" und ergänzen Sie in der darauffolgenden Zeile die Anweisung "klausurnoten", um die Variable anzuzeigen.
+</div>
+
+## 2. Codeblock
+
+Codeblöcke von Schleifen oder Funktionen werden mit geschweiften Klammern umschlossen.
+
+Führen Sie die for-Schleife aus, welche die ersten beiden Werte der Klausurnoten mit den Werten 3 und 1 ausgibt.
+
+```{r 2-setup, exercise=FALSE, echo=FALSE, include=FALSE}
+x <- 3
+y <- 1 
+klausurnoten <- c(x,y)
+```
+
+```{r 2, exercise=TRUE, exercise.setup="2-setup"}
+for (i in 1:2) {         # For-Schleife von 1 bis 2
+  print(klausurnoten[i]) # Gibt die Inhalte von klausurnoten mit Index i aus
+}
+
+```
+
+## 3. Funktionsaufruf
+
+R-Befehle bestehen aus Ausdrücken, also aus Wertzuweisungen (arithmetische oder logische Operatoren) oder Funktionsaufrufen. Funktionsaufrufe sind daran erkennbar, dass nach dem Namen der Funktion Klammern folgen, in denen einer Funktion ggfs. Parameter mitgegeben werden können, z.B. mean(klausurnoten), um den Mittelwert für die Variable „klausurnoten“ zu berechnen.
+
+### 3.1 Aufruf einer Funktion
+
+Rufen Sie die Funktion mean() auf und verwenden Sie als Parameter den Vektor klausurnoten. Als Ergebnis sollte 2 angezeigt werden.
+
+```{r 3_1-setup, exercise=FALSE, echo=FALSE, include=FALSE}
+x <- 3
+y <- 1 
+klausurnoten <- c(x,y)
+```
+
+```{r 3_1, exercise=TRUE, exercise.setup="3_1-setup"}
+
+```
+
+<div id="3_1-hint">
+**Hint:** Tippen Sie "mean(klausurnoten)" ein, um die Funktion mean() auszuführen.
+</div>
+
+### 3.2 Hilfe zu Funktion
+
+Die Hilfe zu einer Funktion in R kann über ein dem Funktionsnamen vorangestelltes Fragezeichen erfolgen, z.B. ?ggplot, um die Hilfe zu der Funktion ggplot angezeigt zu bekommen. In der Hilfe werden u.a. auch die Parameter einer Funktion vorgestellt.
+
+Lassen Sie sich die Hilfe zu der Funktion mean anzeigen. Dies kann in R-Studio oder in einem separaten Browser-Fenster angezeigt werden.
+
+```{r 3_2, exercise=TRUE}
+
+```
+
+<div id="3_2-hint">
+**Hint:** Tippen Sie "?mean" ein, um die Hilfe zu der Funktion mean() anzuzeigen.
+</div>
+
+## 4. Quiz 
+
+```{r 4, echo = FALSE}
+quiz(
+  question("Welche der folgenden Aussagen sind korrekt?", allow_retry = TRUE, random_answer_order = TRUE,
+  answer("Wertzuweisungen erfolgen über den Zuweisungsoperator <-.", correct = TRUE, message = "Alternativ zu <- kann auch das = verwendet werden."),
+  answer("Kommentare beginnen in R mit dem Anführungszeichen.", message = "Nein, das #-Zeichen stellt den Beginn eines Kommentars dar."),
+  answer("Codeblocks werden durch Klammern ( und ) eingeschlossen.", message = "Nein, Codeblocks werden in { und } eingeschlossen."),
+  answer("Funktionsaufrufe erfolgen durch die Angabe des Funktionsnamens gefolgt von ( und ). In den Klammern werden ggfs. Parameter an die Funktion übergeben.", correct = TRUE, message = "Ja, in Klammern können einer Funktion beliebig viele Parameter beliebigen Formats übergeben werden."),
+    type = "multiple"
+  )
+)
+```
+
+## Ende 
+
+Gratulation!
+
+Sie haben dieses Tutorial erfolgreich ausgeführt und einen ersten Einblick in die Syntax der Programmiersprache R erhalten.
