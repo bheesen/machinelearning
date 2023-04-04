@@ -11,6 +11,7 @@ runtime: shiny_prerendered
 ---
 
 ```{r setup, include=FALSE}
+library(datascience)
 library(machinelearning)
 colnames(studierende)[5]<-"Größe"
 colnames(studierende)[10]<-"Fußball"
