@@ -25,6 +25,21 @@
 #' }
 "kfz"
 
+
+#' Used cars in the USA crawled 2016
+#'
+#' The dataset was created from data available at \url{https://www.prescient.pro/}.
+#'
+#' @format A data frame with 49999 rows and 5 variables
+#' \describe{
+#'   \item{Marke}{brand}
+#'   \item{Zulassung}{year of first use}
+#'   \item{PS}{horsepower}
+#'   \item{Kilometerstand}{odometer}
+#'   \item{Preis}{price}
+#' }
+"kfz2"
+
 #' List of words with sentiment value
 #'
 #' A list of words in a text with their sentiment value based on the Leipzig dictionary \url{https://www.prescient.pro/}.
