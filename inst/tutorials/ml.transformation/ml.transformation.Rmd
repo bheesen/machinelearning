@@ -11,7 +11,7 @@ runtime: shiny_prerendered
 ---
 
 ```{r setup, include=FALSE}
-library(datascience)
+library(machinelearning)
 library(tidyverse)
 library(learnr)
 library(fivethirtyeight)
@@ -176,13 +176,13 @@ table(df$altersgruppe)                          # Umcodierte Werte
 Eine Umcodierung von metrischen Variablen, z.B. Maßeinheiten und Währungen ist ebenfalls eine oft erforderliche Aktivität im Vorfeld von Auswertungen. Dabei kommen in der Regel einfache arithmetische Operationen zur Anwendung.
 
 ```{r 2_4, exercise=FALSE}
-head(kfz, 7)
+head(kfz2, 7)
 wechselkurs <- 0.89                                # Wechselkurs Dollar->Euro
-kfz$PreisEuro <- str_sub(kfz$Preis, 2, 10)         # Nur Zeichen 2-10 übernehmen
-kfz$PreisEuro <- sub(",","",kfz$PreisEuro)         # "," entfernen
-kfz$PreisEuro <- as.numeric(kfz$PreisEuro) * wechselkurs  # Eurowert
-kfz$PreisEuroPrint <- sprintf("%s %9.2f ", "Euro", kfz$PreisEuro)
-head(kfz, 7)
+kfz2$PreisEuro <- str_sub(kfz2$Preis, 2, 10)         # Nur Zeichen 2-10 übernehmen
+kfz2$PreisEuro <- sub(",","",kfz2$PreisEuro)         # "," entfernen
+kfz2$PreisEuro <- as.numeric(kfz2$PreisEuro) * wechselkurs  # Eurowert
+kfz2$PreisEuroPrint <- sprintf("%s %9.2f ", "Euro", kfz2$PreisEuro)
+head(kfz2, 7)
 ```
 
 ### 2.5 Umgang mit fehlenden Werten (NA)
@@ -190,13 +190,13 @@ head(kfz, 7)
 Bevor Daten analysiert werden, gilt es auch die Qualität der Daten zu überprüfen, dazu gehört es u.a. die Vollständigkeit der Daten zu betrachten. Ungültige Werte gilt es zu korrigieren. Im nachfolgenden Beispiel wird das Jahr der Zulassung eines KFZ auf NA gesetzt, sofern das Jahr vor 1900 oder nach 2021 angegeben wurde, da die Daten aus dem Jahr 2021 stammen. 
 
 ```{r 2_5, exercise=FALSE}
-sum(is.na(kfz$Zulassung))                               # Anzahl NA in Zulassung
-kfz$Zulassung[kfz$Zulassung<1900&!is.na(kfz$Zulassung)] # Zulassung vor 1900
-kfz$Zulassung[kfz$Zulassung<1900] <- NA                 # durch NA ersetzen
-sum(is.na(kfz$Zulassung))                               # Anzahl NA in Zulassung
-kfz$Zulassung[kfz$Zulassung>2021&!is.na(kfz$Zulassung)] # Zulassung nach 2021
-kfz$Zulassung[kfz$Zulassung>2021] <- NA                 # durch NA ersetzen
-sum(is.na(kfz$Zulassung))                               # Anzahl NA in Zulassung
+sum(is.na(kfz2$Zulassung))                               # Anzahl NA in Zulassung
+kfz2$Zulassung[kfz2$Zulassung<1900&!is.na(kfz2$Zulassung)] # Zulassung vor 1900
+kfz2$Zulassung[kfz2$Zulassung<1900] <- NA                 # durch NA ersetzen
+sum(is.na(kfz2$Zulassung))                               # Anzahl NA in Zulassung
+kfz2$Zulassung[kfz2$Zulassung>2021&!is.na(kfz2$Zulassung)] # Zulassung nach 2021
+kfz2$Zulassung[kfz2$Zulassung>2021] <- NA                 # durch NA ersetzen
+sum(is.na(kfz2$Zulassung))                               # Anzahl NA in Zulassung
 ```
 
 In R werden fehlende Werte mit NA (Not Available) gekennzeichnet. Mit der Funktion is.na() kann man sich anzeigen lassen, ob ein Datensatz NA enthält oder einen Wert. Für jeden Datensatz wird FALSE ausgegeben, wenn der Wert ungleich NA ist und TRUE, wenn der Wert NA ist. Die Anweisung filter(formel1, is.na(formel1$Platzierung) == TRUE) zeigt zum Beispiel alle Datensätze aus dem Dataframe formel1 an, bei denen die Angabe zur Platzierung fehlt. Es gibt verschiedene Optionen im Umgang mit fehlenden Werten:
@@ -209,22 +209,22 @@ In R werden fehlende Werte mit NA (Not Available) gekennzeichnet. Mit der Funkti
 
 ```{r 2_6, exercise=FALSE}
 #- Mittelwert lässt sich nur mit Parameter na.rm=T berechnen---------------------
-mw <- mean(kfz$Zulassung)                        # Mittelwert für Zulassung
+mw <- mean(kfz2$Zulassung)                        # Mittelwert für Zulassung
 mw                                               # Mittelwert anzeigen
-mw <- mean(kfz$Zulassung,na.rm=T)                # Mittelwert für Zulassung
+mw <- mean(kfz2$Zulassung,na.rm=T)                # Mittelwert für Zulassung
 mittelwert<-round(mw,0)                          # Mittelwert ohne Nachkommastelle
 mittelwert                                       # Mittelwert anzeigen
 #- NA-Datensätze löschen, wenn sie in EINER SPEZIFISCHEN Spalte NA enthalten-----
-kfz.kopie <- kfz                                 # Kopie für drop_na(,x) demo
-sum(is.na(kfz.kopie$Preis))                      # Anzahl NA in Preis
-kfz.kopie <- drop_na(kfz.kopie, Preis)           # Löschen Zeilen mit NA in Preis
-sum(is.na(kfz.kopie$Preis))                      # Anzahl NA in Preis
+kfz2.kopie <- kfz2                                 # Kopie für drop_na(,x) demo
+sum(is.na(kfz2.kopie$Preis))                      # Anzahl NA in Preis
+kfz2.kopie <- drop_na(kfz2.kopie, Preis)           # Löschen Zeilen mit NA in Preis
+sum(is.na(kfz2.kopie$Preis))                      # Anzahl NA in Preis
 #- NA-Werte durch Mittelwert ersetzen--------------------------------------------
-head(filter(kfz,Marke=="volkswagen"&PS==75),7)   # 7 Datensätze anzeigen
-sum(is.na(kfz.kopie$Zulassung))                  # Anzahl NA in Zulassung
-kfz$Zulassung<-ifelse(is.na(kfz$Zulassung),mittelwert,kfz$Zulassung)# NA->Mittelwert
-sum(is.na(kfz.kopie$Zulassung))                  # Anzahl NA in Zulassung
-head(filter(kfz,Marke=="volkswagen"&PS==75),7)   # 7 Datensätze anzeigen
+head(filter(kfz2,Marke=="volkswagen"&PS==75),7)   # 7 Datensätze anzeigen
+sum(is.na(kfz2.kopie$Zulassung))                  # Anzahl NA in Zulassung
+kfz2$Zulassung<-ifelse(is.na(kfz2$Zulassung),mittelwert,kfz2$Zulassung)# NA->Mittelwert
+sum(is.na(kfz2.kopie$Zulassung))                  # Anzahl NA in Zulassung
+head(filter(kfz2,Marke=="volkswagen"&PS==75),7)   # 7 Datensätze anzeigen
 ```
 
 ### 2.6 Selektion von Spalten
