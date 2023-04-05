@@ -16,7 +16,7 @@ graphics for qualitative and quantitative variables.
 
 ## Installation
 
-You can install the development version of machinelearning from
+You can install the package machinelearning from
 [GitHub](https://github.com/) with:
 
 ``` r
@@ -24,16 +24,32 @@ You can install the development version of machinelearning from
 devtools::install_github("bheesen/machinelearning")
 ```
 
-## Example
+## Activation
 
-This is a basic example which shows you how to solve a common problem:
+The functions, data and tutorials are available once you activated the
+package:
 
 ``` r
 library(machinelearning)
 ```
 
-What is special about using `README.Rmd` instead of just `README.md`?
-You can include R chunks like so:
+## Tutorials
+
+You can start the tutorials of the package with the following commands:
+
+``` r
+ml.tutorial(name = "ml.syntax")
+ml.tutorial(name = "ml.datentypen")
+ml.tutorial(name = "ml.datenstrukturen")
+ml.tutorial(name = "ml.operationen")
+ml.tutorial(name = "ml.importexport")
+ml.tutorial(name = "ml.transformation")
+ml.tutorial(name = "ml.visualisierung")
+```
+
+## Example
+
+This is a basic example which shows you how to solve a common problem:
 
 ``` r
 ergebnis<-ml.summary(autos$PS,"Autos","PS",box=T)
