@@ -11,7 +11,7 @@ runtime: shiny_prerendered
 ---
 
 ```{r setup, include=FALSE}
-library(datascience)
+library(machinelearning)
 colnames(studierende)[5]<-"Größe"
 colnames(studierende)[10]<-"Fußball"
 colnames(studierende)[13]<-"Attraktivität"
@@ -365,36 +365,36 @@ grid.arrange(p2,p3,p4,p5,p6,p7,nrow=3,ncol=2)      # Ausgabe
 
 ### 2.5 Gruppierte Scatter-Plots und Bar-Charts
 
-Nachfolgend werden Daten aus dem Dataframe kfz visualisiert. Zunächst wird das Alter berechnet. Da die Daten in dem Jahr 2019 von einer Gebrauchtwagenseite entnommen wurde, wird 2019 als Basisjahr verwendet. Eine Altersgruppe wird als ordinale Variable berechnet und es erfolgt noch eine Beschränkung auf Autos mit einer PS-Zahl zwischen 50 und 150 und einem Preis zwischen 500€ und 10.000€.
+Nachfolgend werden Daten aus dem Dataframe kfz2 visualisiert. Zunächst wird das Alter berechnet. Da die Daten in dem Jahr 2019 von einer Gebrauchtwagenseite entnommen wurde, wird 2019 als Basisjahr verwendet. Eine Altersgruppe wird als ordinale Variable berechnet und es erfolgt noch eine Beschränkung auf Autos mit einer PS-Zahl zwischen 50 und 150 und einem Preis zwischen 500€ und 10.000€.
 
 Neben zwei Verhältnisvariablen kann eine kategoriale Gruppierungsvariable verwendet werden, um Balken oder Punkte z.B. andersfarbig abzubilden. Dies kann mit dem Parameter group für Scatter-Plots oder fill für Bar-Charts in der Funktion aes() erreicht werden.
 
 ```{r 2_5-setup, exercise=FALSE, echo=FALSE, include=FALSE}
-kfz$Alter<-2019-kfz$Zulassung                      # Alter berechnen
-kfz$Altersgruppe <-                                # Altersgruppe ermitteln 
-  case_when(kfz$Alter < 3 ~ "neuwertig",
-    between(kfz$Alter,3,10) ~ "mittelalt",
-    between(kfz$Alter,11,15) ~ "alt",
-            kfz$Alter > 15 ~ "oldtimer")
-kfz$Altersgruppe <- factor(kfz$Altersgruppe, 
+kfz2$Alter<-2019-kfz2$Zulassung                      # Alter berechnen
+kfz2$Altersgruppe <-                                # Altersgruppe ermitteln 
+  case_when(kfz2$Alter < 3 ~ "neuwertig",
+    between(kfz2$Alter,3,10) ~ "mittelalt",
+    between(kfz2$Alter,11,15) ~ "alt",
+            kfz2$Alter > 15 ~ "oldtimer")
+kfz2$Altersgruppe <- factor(kfz2$Altersgruppe, 
     levels=c("neuwertig","mittelalt","alt","oldtimer"), ordered = T)
 wechselkurs <- 0.83                                # Wechselkurs Dollar->Euro
-kfz$PreisEuro <- str_sub(kfz$Preis, 2, 10)         # Nur Zeichen 2-10 übernehmen
-kfz$PreisEuro <- sub(",","",kfz$PreisEuro)         # "," entfernen
-kfz$PreisEuro <- as.numeric(kfz$PreisEuro,na.rm=T) * wechselkurs  # Eurowert
-kfz<-filter(kfz,PreisEuro<10000 & PreisEuro>500 & PS<150 & PS>50)
-kfz$PreisEuro<-round(kfz$PreisEuro/1000,0)
+kfz2$PreisEuro <- str_sub(kfz2$Preis, 2, 10)         # Nur Zeichen 2-10 übernehmen
+kfz2$PreisEuro <- sub(",","",kfz2$PreisEuro)         # "," entfernen
+kfz2$PreisEuro <- as.numeric(kfz2$PreisEuro,na.rm=T) * wechselkurs  # Eurowert
+kfz2<-filter(kfz2,PreisEuro<10000 & PreisEuro>500 & PS<150 & PS>50)
+kfz2$PreisEuro<-round(kfz2$PreisEuro/1000,0)
 ```
 
 ```{r 2_5, exercise=FALSE, exercise.setup="2_5-setup"}
 #- 2 Metrische Variablen und 1-2 Kategoriale Variablen-------------------------
-p1<-ggplot(kfz)+                          
+p1<-ggplot(kfz2)+                          
     aes(x=PS,y=PreisEuro,group=Altersgruppe,       # 2 Metr.Var. + 1 Kateg.Var.
         color=Altersgruppe,linetype=Altersgruppe)+ 
     geom_point(size=1)+
     labs(y="Preis (Tausend €)")+          # Bezeichnung y-Achse
     scale_y_continuous(breaks=c(1:10))    # Skala für y-Achse
-p2<-ggplot(kfz)+                          
+p2<-ggplot(kfz2)+                          
     aes(x=PS,fill=Altersgruppe)+          # 2 Metr.Var. + 1 Kateg.Var.
     geom_histogram(bins=10)               # Histogramm
 grid.arrange(p1,p2,nrow=2)                # Ausgabe
@@ -405,28 +405,28 @@ grid.arrange(p1,p2,nrow=2)                # Ausgabe
 Gerade wenn mehrere Gruppierungsvariablen zum Einsatz kommen, die in Abbildungen mit Hilfe von Farben und Formen dargestellt werden, kann eine Abbildung unübersichtlich werden. Hier kann die Funktion facet_wrap() oder facet_grid() hilfreich sein. Die Funktion facet_wrap() erstellt für jede Kategorie einer Gruppierungsvariablen eine eigene Abbildung und die Funktion facet_grid() leistet das gleiche für jede Kombination aller Kategorien von zwei Gruppierungsvariablen.
 
 ```{r 2_6-setup, exercise=FALSE, echo=FALSE, include=FALSE}
-kfz$Alter<-2019-kfz$Zulassung                      # Alter berechnen
-kfz$Altersgruppe <-                                # Altersgruppe ermitteln 
-  case_when(kfz$Alter < 3 ~ "neuwertig",
-    between(kfz$Alter,3,10) ~ "mittelalt",
-    between(kfz$Alter,11,15) ~ "alt",
-            kfz$Alter > 15 ~ "oldtimer")
-kfz$Altersgruppe <- factor(kfz$Altersgruppe, 
+kfz2$Alter<-2019-kfz2$Zulassung                      # Alter berechnen
+kfz2$Altersgruppe <-                                # Altersgruppe ermitteln 
+  case_when(kfz2$Alter < 3 ~ "neuwertig",
+    between(kfz2$Alter,3,10) ~ "mittelalt",
+    between(kfz2$Alter,11,15) ~ "alt",
+            kfz2$Alter > 15 ~ "oldtimer")
+kfz2$Altersgruppe <- factor(kfz2$Altersgruppe, 
     levels=c("neuwertig","mittelalt","alt","oldtimer"), ordered = T)
-kfz<-drop_na(kfz,Altersgruppe)
+kfz2<-drop_na(kfz2,Altersgruppe)
 ```
 
 ```{r 2_6, exercise=FALSE, exercise.setup="2_6-setup"}
-p1<-ggplot(kfz)+                          
+p1<-ggplot(kfz2)+                          
     aes(x=PS,fill=Altersgruppe)+          # 2 Metr.Var. + 1 Kateg.Var.
     facet_wrap(~ Altersgruppe)            # Eigene Abb. je Altersgruppe
 p1 + geom_histogram(bins=10)              # Histogramm
-kfz.marke<-filter(kfz,Marke %in% c("bmw","peugeot","volkswagen"))
-p1<-ggplot(kfz.marke)+                          
+kfz2.marke<-filter(kfz2,Marke %in% c("bmw","peugeot","volkswagen"))
+p1<-ggplot(kfz2.marke)+                          
     aes(x=PS,fill=Altersgruppe)+          # 2 Metr.Var. + 1 Kateg.Var.
     facet_grid(~ Altersgruppe)            # Eigene Abb. je Altersgruppe
 p1 + geom_histogram(bins=10)              # Histogramm
-p1<-ggplot(kfz.marke)+                          
+p1<-ggplot(kfz2.marke)+                          
     aes(x=PS,fill=Altersgruppe)+          # 2 Metr.Var. + 1 Kateg.Var.
     facet_grid(Marke ~ Altersgruppe)      # Eigene Abb. je Altersgruppe/Marke
 p1 + geom_histogram(bins=10)              # Histogramm
