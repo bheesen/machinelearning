@@ -11,7 +11,7 @@ runtime: shiny_prerendered
 ---
 
 ```{r setup, include=FALSE}
-library(machinelearning)
+library(datascience)
 library(tidyverse)
 library(learnr)
 library(fivethirtyeight)
