@@ -22,14 +22,6 @@ You can install the package machinelearning from
 ``` r
 # install.packages("devtools")
 devtools::install_github("bheesen/machinelearning")
-```
-
-## Activation
-
-The functions, data and tutorials are available once you activated the
-package:
-
-``` r
 library(machinelearning)
 ```
 
@@ -49,7 +41,7 @@ ml.tutorial(name = "ml.visualisierung")
 
 ## Example
 
-This is a basic example which shows you how to solve a common problem:
+This is an example using some of the functions included in the package:
 
 ``` r
 ergebnis<-ml.summary(autos$PS,"Autos","PS",box=T)
