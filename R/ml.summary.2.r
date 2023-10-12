@@ -69,7 +69,7 @@ ml.summary.2<-function (df,titel,xvar,yvar,npos=0,dec=0,bw=F,
       #- Bar-Chart------------------------------------------------------------------
       if (bar==TRUE){
         if(dim(table(df$x))>10){
-          df$x2 <- cut_number(df$x,10)                    # 10 Gruppen bilden
+          df$x2 <- cut_number(df$x,8)                    # 8 Gruppen bilden
         }
         else {
           df$x2 <- df$x
@@ -153,7 +153,7 @@ ml.summary.2<-function (df,titel,xvar,yvar,npos=0,dec=0,bw=F,
             df.top10.sum <- df.top10 %>% 
               group_by(y) %>% 
               summarise(n=n(),
-                        mw=round(mean(x),dec))
+                        mw=round(mean(x,na.rm=TRUE),dec))
             if (npos==0) {
               p.box<-ggplot(df.top10)+                          
                 aes(x=x,y=y,fill=y)+
@@ -187,7 +187,7 @@ ml.summary.2<-function (df,titel,xvar,yvar,npos=0,dec=0,bw=F,
             df.top10.sum <- df.top10 %>% 
               group_by(y) %>% 
               summarise(n=n(),
-                        mw=round(mean(x),dec))
+                        mw=round(mean(x,na.rm=TRUE),dec))
             if (npos==0) {
               p.box<-ggplot(df.top10)+                          
                 aes(x=x,y=y)+
