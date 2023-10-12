@@ -69,7 +69,7 @@ ml.summary.2<-function (df,titel,xvar,yvar,npos=0,dec=0,bw=F,
       #- Bar-Chart------------------------------------------------------------------
       if (bar==TRUE){
         if(dim(table(df$x))>10){
-          df$x2 <- cut_number(df$x,8)                    # 8 Gruppen bilden
+          df$x2 <- cut_number(df$x,round(dim(table(df$x)/2,0))) # Gruppen bilden
         }
         else {
           df$x2 <- df$x
