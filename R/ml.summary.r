@@ -128,11 +128,20 @@ ml.summary<-function (variable,titel,achse,bar=F,barminmax=0,box=F,rel=F)
     tab.daten<-table(df$daten)
     df.x<-data.frame(x=tab.daten)
     colnames(df.x)<-c("y","x")
-    p.bar<-ggplot2::ggplot(df.x)+                          
-      ggplot2::aes(x=x,y=reorder(y,x),fill=y)+
-      ggplot2::geom_bar(position="dodge",stat="identity")+
-      ggplot2::labs(title="Bar-Chart",subtitle=titel,x="Anzahl",y=achse)+
-      ggplot2::theme(legend.position = "none")
+    if (is.factor(df.x$y) | is.ordered(df.x$y)) {
+      p.bar<-ggplot2::ggplot(df.x)+                          
+        ggplot2::aes(x=x,y=y,fill=y)+
+        ggplot2::geom_bar(position="dodge",stat="identity")+
+        ggplot2::labs(title="Bar-Chart",subtitle=titel,x="Anzahl",y=achse)+
+        ggplot2::theme(legend.position = "none")
+    }
+    else {
+      p.bar<-ggplot2::ggplot(df.x)+                          
+        ggplot2::aes(x=x,y=reorder(y,x),fill=y)+
+        ggplot2::geom_bar(position="dodge",stat="identity")+
+        ggplot2::labs(title="Bar-Chart",subtitle=titel,x="Anzahl",y=achse)+
+        ggplot2::theme(legend.position = "none")
+    }
     gridExtra::grid.arrange(p.bar,nrow=1,ncol=1)
     if (barminmax>0){
       df.x.sort<-dplyr::arrange(df.x,x)[1:barminmax,]

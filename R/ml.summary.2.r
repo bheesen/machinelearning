@@ -68,7 +68,12 @@ ml.summary.2<-function (df,titel,xvar,yvar,npos=0,dec=0,bw=F,
       }
       #- Bar-Chart------------------------------------------------------------------
       if (bar==TRUE){
-        df$x2 <- cut_number(df$x,10)                        # 10 Gruppen bilden
+        if(dim(table(df$x))>10){
+          df$x2 <- cut_number(df$x,10)                    # 10 Gruppen bilden
+        }
+        else {
+          df$x2 <- df$x
+        }
         tab.x<-table(df$x2)
         df.x<-data.frame(x=tab.x)
         colnames(df.x)<-c("y","x")
@@ -97,7 +102,9 @@ ml.summary.2<-function (df,titel,xvar,yvar,npos=0,dec=0,bw=F,
                                 values=colour.own.nomin.1)+
               guides(fill=guide_legend(reverse=TRUE))
           } else {
-            df<- df %>% mutate(y=fct_reorder(y,x,.fun="max"))
+            if (!is.ordered(df$y)) {
+              df<- df %>% mutate(y = fct_reorder(y,x, .fun="max"))
+            }
             p.bar<-ggplot(df)+                          
               aes(x=x,y=y)+
               geom_bar(position="dodge",stat="identity")+
@@ -132,7 +139,9 @@ ml.summary.2<-function (df,titel,xvar,yvar,npos=0,dec=0,bw=F,
       if (box==TRUE){
         if (is.factor(df$y)) {
           df<-droplevels(df)
-          df<- df %>% mutate(y = fct_reorder(y,x, .fun="mean"))
+          if (!is.ordered(df$y)) {
+            df<- df %>% mutate(y = fct_reorder(y,x, .fun="mean"))
+          }
           df.x.mw<-round(mean(df$x,na.rm=TRUE),2)
           if (length(levels(df$y)) > 10 & bw!=TRUE) {
             von<-length(levels(df$y))-4
@@ -140,7 +149,7 @@ ml.summary.2<-function (df,titel,xvar,yvar,npos=0,dec=0,bw=F,
             y.top10<-levels(df$y)[c(1:5,von:bis)]
             df.top10<-filter(df,df$y %in% y.top10)
             df.top10$y<-droplevels(df.top10$y)
-            var.hist<-paste("Box-Plot auf Top10 Levels beschränkt (Top5 + Bottom5)")
+            var.box<-paste("Box-Plot auf Top10 Levels beschränkt (Top5 + Bottom5)")
             df.top10.sum <- df.top10 %>% 
               group_by(y) %>% 
               summarise(n=n(),
@@ -174,7 +183,7 @@ ml.summary.2<-function (df,titel,xvar,yvar,npos=0,dec=0,bw=F,
           }
           else {
             df.top10<-df
-            var.hist<-paste("Box-Plot fehlerfrei")
+            var.box<-paste("Box-Plot fehlerfrei")
             df.top10.sum <- df.top10 %>% 
               group_by(y) %>% 
               summarise(n=n(),
@@ -200,9 +209,10 @@ ml.summary.2<-function (df,titel,xvar,yvar,npos=0,dec=0,bw=F,
             }
             grid.arrange(p.box,nrow=1,ncol=1)
           }
+          var.box<-paste("Box-Plot fehlerfrei")
         }
         else {
-          var.bar<-paste("Box-Plot nicht möglich: Zweite Variable nicht nominal")
+          var.box<-paste("Box-Plot nicht möglich: Zweite Variable nicht nominal")
         }
       }
       if (scatter==TRUE){
@@ -231,7 +241,7 @@ ml.summary.2<-function (df,titel,xvar,yvar,npos=0,dec=0,bw=F,
           colnames(df)<-c(xvar,yvar)
           p.kor<-GGally::ggpairs(df)
           cowplot::plot_grid(ggmatrix_gtable(p.kor),nrow=1)
-          var.line<-paste("Korrelations-Matrix fehlerfrei")
+          var.kor<-paste("Korrelations-Matrix fehlerfrei")
           return(p.kor)
         }
         else {
