@@ -6,6 +6,7 @@
 #' @param yvar name of the second variable
 #' @param npos defines the x-value at which the number of items per category is displayed in a box-plot
 #' @param dec defines the number of decimals behind the period
+#' @param groups defines the number of groups created for bar charts when > 10 values
 #' @param bw uses only black and white in a box-plot
 #' @param hist if TRUE a histogram is created
 #' @param bar if TRUE a bar-chart is created
@@ -17,12 +18,14 @@
 #' @return text with feedback to the function
 #' @example ml.summary.2(mpg[,c(3,1)],"Autos","Motorgröße in Liter","Marke",box=T)
 #' @export
-ml.summary.2<-function (df,titel,xvar,yvar,npos=0,dec=0,bw=F,
+ml.summary.2<-function (df,titel,xvar,yvar,npos=0,dec=0,groups=10,bw=F,
                         hist=F,bar=F,line=F,box=F,scatter=F,kor=F) 
     # df:             Dataframe mit 2 Variablen, die analysiert werden sollen
     # titel:          Untertitel 
     # xvar,yvar:      Variablen
     # npos:           x-Wert, bei dem die Anzahl der Datensätze angezeigt wird
+    # groups:         Anzahl an Gruppen, die für ein Bar-Chart gebildet werden
+    #                 sollen, wenn mehr als 10 Werte vorliegen
     # bw:             Schwarz/Weiß ohne Farbe
     # hist:           TRUE=Histogramm visualisieren
     # bar:            TRUE=Bar-Chart visualisieren
@@ -69,7 +72,7 @@ ml.summary.2<-function (df,titel,xvar,yvar,npos=0,dec=0,bw=F,
       #- Bar-Chart------------------------------------------------------------------
       if (bar==TRUE){
         if(dim(table(df$x))>10){
-          df$x2 <- cut_number(df$x,round(dim(table(df$x)/2,0))) # Gruppen bilden
+          df$x2 <- cut_number(df$x,groups) # Gruppen bilden
         }
         else {
           df$x2 <- df$x
