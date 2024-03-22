@@ -677,7 +677,7 @@ for(i in 1:4) { # Variableninhalt dynamisch abrufen 'v.1', 'v.2', ... 'v.4'
 quiz(
   question("Welche der folgenden Aussagen sind korrekt?", allow_retry = TRUE, random_answer_order = TRUE,
     answer("a[2:4] gibt das 2.-4. Element des Vektors a aus.", correct = TRUE),
-    answer("b[<3.3 & >2] gibt alle Werte von b aus, die <3.3 und >2 sind.", message = "Nein, b[b<3.3 & b>2] gibt alle Werte von b aus, die <3.3 und >2 sind."),
+    answer("b[<3.3 & >2] gibt alle Werte von b aus, die beide Bedingungen erfüllen und <3.3 und >2 sind.", correct = TRUE),
     type = "multiple"
   ),
   question("Welche der folgenden Aussagen sind korrekt?", allow_retry = TRUE, random_answer_order = TRUE,
